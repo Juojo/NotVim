@@ -1,0 +1,2 @@
+mvn package
+java -cp target/NotVim-1.0-SNAPSHOT.jar org.example.Main
