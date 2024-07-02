@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.Arrays;
-
 import com.sun.jna.Structure;
 
 @Structure.FieldOrder(value = {"c_iflag", "c_oflag", "c_cflag", "c_lflag", "c_cc"})
