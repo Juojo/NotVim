@@ -1,18 +1,21 @@
 package org.example;
 
-public class RawTerminalViewer {
+public class RawMode {
 
-	Termios termios = new Termios();
-	int returnCode = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
+	private Termios termios = new Termios();
+	private int returnCode = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
 	
-	public RawTerminalViewer() {
-
+	public void enable() {
 		if (returnCode != 0) { // error
 			System.err.println("Error calling tcgetattr");
 			System.exit(returnCode);
 		}
 		
         setTermiosFlags();
+	}
+	
+	public void disable() {
+		
 	}
 
 	private void setTermiosFlags() {

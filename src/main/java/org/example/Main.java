@@ -6,13 +6,15 @@ import org.example.util.Colors;
 
 public class Main {
 	
+	public static RawMode rawMode = new RawMode();
+	
     public static void main(String[] args) {
 
 //        System.out.println("\033[4;44;31mHola\033[0m");
 
 //        System.out.println(printCustomString("Hola", Colors.RED.getColor()));
 //      
-    	new RawTerminalViewer();
+    	rawMode.enable();
     	
     	int key = 0;
         
