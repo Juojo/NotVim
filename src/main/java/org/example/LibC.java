@@ -10,6 +10,7 @@ public interface LibC extends Library {
 	
 	LibC INSTANCE = Native.load("c", LibC.class);
 	
+	
 	int tcgetattr(int fd, Termios termios);
 	
 	int tcsetattr(int fd, int optional_actions, Termios termios);

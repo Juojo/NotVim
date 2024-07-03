@@ -16,7 +16,7 @@ public class Termios extends Structure {
     	
     }
     
-    public Termios of(Termios t) {
+    public static Termios of(Termios t) {
     	Termios copy = new Termios();
     	copy.c_iflag = t.c_iflag;
     	copy.c_oflag = t.c_oflag;

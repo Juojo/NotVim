@@ -5,6 +5,8 @@ public class RawMode {
 	private Termios termios = new Termios();
 	private int returnCode = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
 	
+	private Termios originalAttributes = Termios.of(termios); // Store original termios attributes to disable raw mode
+	
 	public void enable() {
 		if (returnCode != 0) { // error
 			System.err.println("Error calling tcgetattr");
@@ -15,7 +17,7 @@ public class RawMode {
 	}
 	
 	public void disable() {
-		
+		LibC.INSTANCE.tcsetattr(LibC.SYSYTEM_OUT_FD, LibC.TCSAFLUSH, originalAttributes);
 	}
 
 	private void setTermiosFlags() {

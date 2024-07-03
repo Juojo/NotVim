@@ -30,7 +30,7 @@ public class Main {
 		}
 
     	
-    	
+    	rawMode.disable();
     }
 
     private static String printCustomString(String content, String color) {
