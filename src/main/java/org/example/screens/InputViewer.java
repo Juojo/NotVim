@@ -9,10 +9,10 @@ public class InputViewer extends Screen {
 	public InputViewer(int row, int col) {
 		super(row, col);
 		
-		printKeyCodes();
+		readPrintKeyCodes();
 	}
 
-	private void printKeyCodes() {
+	private void readPrintKeyCodes() {
 		int key = 0;
         
         while ((int) key != 113) { // 113 == "q"
