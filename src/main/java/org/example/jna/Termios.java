@@ -1,4 +1,4 @@
-package org.example;
+package org.example.jna;
 
 import java.util.Arrays;
 import com.sun.jna.Structure;

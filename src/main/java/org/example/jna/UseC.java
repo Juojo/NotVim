@@ -1,19 +1,17 @@
-package org.example;
+package org.example.jna;
 
 public class UseC {
 
 	private Termios termios = new Termios();
 	
-	
+	private int rc_tcgetattr = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
 	private Termios originalAttributes = Termios.of(termios); // Store original termios attributes to disable raw mode
 	
 	public void enableRawMode() {
-		int rc = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
-		
-		if (rc != 0) {
-			System.err.println("Error calling tcgetattr, return code: " + rc);
+		if (rc_tcgetattr != 0) {
+			System.err.println("Error calling tcgetattr, return code: " + rc_tcgetattr);
 			disableRawMode();
-			System.exit(rc);
+			System.exit(rc_tcgetattr);
 		}
 		
         setTermiosFlags();

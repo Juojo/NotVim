@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.jna.Ioctl;
+import org.example.jna.UseC;
 import org.example.screens.Screen;
 import org.example.screens.TextViewer;
 
@@ -14,6 +16,11 @@ public class Main {
 	public static Screen textViewer;
 	
     public static void main(String[] args) {
+    	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            C.disableRawMode();
+            System.out.println("Shutdown hook: Raw mode disabled.");
+        }));
+    	
     	C.enableRawMode();
     	setRowsAndColumns();
     	
@@ -25,8 +32,8 @@ public class Main {
 
 	public static void setRowsAndColumns() {
 		ioctl = C.getTermianlSize();
-		rows = ioctl.getWsRow();
-		columns = ioctl.getWsCol();
+		rows = ioctl.ws_row;
+		columns = ioctl.ws_col;
 	}
 
     

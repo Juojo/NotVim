@@ -1,4 +1,4 @@
-package org.example;
+package org.example.jna;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
