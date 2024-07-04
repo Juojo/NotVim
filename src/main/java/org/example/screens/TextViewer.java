@@ -8,6 +8,7 @@ public class TextViewer extends Screen {
 		for (int i = 0; i < row-super.getStatusHeight() ; i++) {
 			System.out.print("~\r\n");
 		}
+		printStatusBar();
 	}
 
 	
