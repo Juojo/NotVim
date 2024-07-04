@@ -8,14 +8,14 @@ public abstract class Screen {
 	
 	public Screen(int row, int col) {
 		resizeScreen(row, col);
-		cleanScreen();
+		clearScreen();
 	}
 	
 	protected void printStatusBar() {
 		System.out.print("NotVim text editor"); // Make this look nicer
 	}
 	
-	private void cleanScreen() {
+	private void clearScreen() {
 		System.out.print("\033[2J");
 	}
 	

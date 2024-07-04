@@ -1,7 +1,7 @@
 package org.example;
 
-import com.sun.jna.Native;
 import com.sun.jna.Library;
+import com.sun.jna.Native;
 
 public interface LibC extends Library {
 
@@ -14,6 +14,8 @@ public interface LibC extends Library {
 	int tcgetattr(int fd, Termios termios);
 	
 	int tcsetattr(int fd, int optional_actions, Termios termios);
+	
+	int ioctl(int fd, int opt, Ioctl winsize);
 	
 }
 

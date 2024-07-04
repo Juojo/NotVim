@@ -1,22 +1,25 @@
 package org.example;
 
-public class RawMode {
+public class UseC {
 
 	private Termios termios = new Termios();
-	private int returnCode = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
+	
 	
 	private Termios originalAttributes = Termios.of(termios); // Store original termios attributes to disable raw mode
 	
-	public void enable() {
-		if (returnCode != 0) { // error
-			System.err.println("Error calling tcgetattr");
-			System.exit(returnCode);
+	public void enableRawMode() {
+		int rc = LibC.INSTANCE.tcgetattr(LibC.SYSYTEM_OUT_FD, termios);
+		
+		if (rc != 0) {
+			System.err.println("Error calling tcgetattr, return code: " + rc);
+			disableRawMode();
+			System.exit(rc);
 		}
 		
         setTermiosFlags();
 	}
 	
-	public void disable() {
+	public void disableRawMode() {
 		LibC.INSTANCE.tcsetattr(LibC.SYSYTEM_OUT_FD, LibC.TCSAFLUSH, originalAttributes);
 	}
 
@@ -29,6 +32,19 @@ public class RawMode {
 //      termios.c_cc[LibC.VTIME] = 1;
 		
         LibC.INSTANCE.tcsetattr(LibC.SYSYTEM_OUT_FD, LibC.TCSAFLUSH, termios);
+	}
+	
+	public Ioctl getTermianlSize() {
+		final Ioctl ioctl = new Ioctl();
+		final int rc = LibC.INSTANCE.ioctl(LibC.SYSYTEM_OUT_FD, LibC.TIOCGWINSZ, ioctl);
+		
+		if (rc != 0) {
+			System.err.println("Error calling ioctl, return code: " + rc);
+			disableRawMode();
+			System.exit(rc);
+		}
+		
+		return ioctl;
 	}
 	
 }
