@@ -15,7 +15,7 @@ public class InputViewer extends Screen {
 	private void readPrintKeyCodes() {
 		int key = 0;
         
-        while ((int) key != 113) { // 113 == "q"
+        while (super.getLoop()) { // 113 == "q"
 			try {
 				key = System.in.read();
 			} catch (IOException e) {
