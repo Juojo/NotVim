@@ -11,27 +11,59 @@ public abstract class Screen {
 	private int statusHeight = 1;
 	private boolean loop = false;
 	
-	protected int lastKey;
+	protected int firstChar;
 	
 	
 	public Screen(int row, int col) {
 		this.loop = true;
 		resizeScreen(row, col);
-		Util.clearScreen();
 	}
 	
-	protected void handleKey() {
-		try {
-			lastKey = System.in.read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	protected void handleKey() throws IOException {
+		int secondChar = 0, thirdChar = 0;
+		firstChar = System.in.read();
 		
-		if (lastKey == 113) {
+		
+		if (firstChar == 113) {
 			loop = false;
-		} else if (lastKey == 13) {
+		} else if (firstChar == 13) {
 			System.out.print("\n");
 		}
+		
+//		if (firstChar == 27) {
+//			secondChar = System.in.read();
+//			if (secondChar == 91) { // arrow keys
+//				if (firstChar == 65) System.out.print("arrow up");
+//				if (firstChar == 66) System.out.print("arrow down");
+//				if (firstChar == 67) System.out.print("arrow right");
+//				if (firstChar == 68) System.out.print("arrow left");
+//			} else if (secondChar == 79) {	// function key
+//				 if (firstChar == 80) System.out.print("F1");
+//				 if (firstChar == 81) System.out.print("F2");
+//			} else if (secondChar == 0) {
+//				System.out.print("esc");
+//			}
+//		}
+		
+		// Read all posible chars
+		if (firstChar == 27) {
+			secondChar = System.in.read();
+			if (secondChar == 0) System.out.print("esc");
+		}
+		
+		if (firstChar == 27 && secondChar == 91) { // Arrow keys
+			thirdChar = System.in.read();
+			if (thirdChar == 65) System.out.print("arrow up");
+			if (thirdChar == 66) System.out.print("arrow down");
+			if (thirdChar == 67) System.out.print("arrow right");
+			if (thirdChar == 68) System.out.print("arrow left");
+		} else if (firstChar == 27 && secondChar == 79) { // Function keys
+			thirdChar = System.in.read();
+			if (thirdChar == 80) System.out.print("F1");
+			if (thirdChar == 81) System.out.print("F2");
+		}
+		
+		if (firstChar == 27) firstChar = 0;
 	}
 	
 	protected boolean getLoop() {

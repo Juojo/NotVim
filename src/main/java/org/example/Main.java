@@ -2,8 +2,8 @@ package org.example;
 
 import org.example.jna.Ioctl;
 import org.example.jna.UseC;
-import org.example.screens.InputViewer;
 import org.example.screens.Screen;
+import org.example.screens.TextViewer;
 import org.example.util.Util;
 
 public class Main {
@@ -24,8 +24,8 @@ public class Main {
     	C.enableRawMode();
     	setRowsAndColumns();
     	
-    	inputViewer = new InputViewer(40, 30);
-    	//textViewer = new TextViewer(rows, columns);
+    	//inputViewer = new InputViewer(40, 30);
+    	textViewer = new TextViewer(rows, columns);
     	
     	C.disableRawMode();
     	Util.clearScreen();
