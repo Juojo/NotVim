@@ -20,7 +20,7 @@ public class InputViewer extends Screen {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.printf("%s %s %s %d\r\n", printCustomString("Char:", Colors.RED.getColor()), (char) super.firstChar, printCustomString("Int:", Colors.RED.getColor()), (int) super.firstChar);
+			System.out.printf("%s %s %s %d\r\n", returnColorString("Char:", Colors.RED.getColor()), (char) super.firstChar, returnColorString("Int:", Colors.RED.getColor()), (int) super.firstChar);
 		}
 	}
 

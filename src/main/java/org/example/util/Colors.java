@@ -4,7 +4,8 @@ public enum Colors {
 
 	DEFAULT(""),
     RED("31"),
-	WHITE("97");
+	WHITE("97"),
+	BLUE("34");
 
     private final String color;
 

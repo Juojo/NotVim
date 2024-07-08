@@ -2,7 +2,7 @@ package org.example.screens;
 
 import java.io.IOException;
 
-import org.example.util.Util;
+import org.example.util.Colors;
 
 public abstract class Screen {
 
@@ -23,47 +23,35 @@ public abstract class Screen {
 		int secondChar = 0, thirdChar = 0;
 		firstChar = System.in.read();
 		
-		
-		if (firstChar == 113) {
+		if (firstChar == 113) { // q
 			loop = false;
-		} else if (firstChar == 13) {
+		} else if (firstChar == 13 || firstChar == 10) { // Enter
 			System.out.print("\n");
 		}
 		
-//		if (firstChar == 27) {
-//			secondChar = System.in.read();
-//			if (secondChar == 91) { // arrow keys
-//				if (firstChar == 65) System.out.print("arrow up");
-//				if (firstChar == 66) System.out.print("arrow down");
-//				if (firstChar == 67) System.out.print("arrow right");
-//				if (firstChar == 68) System.out.print("arrow left");
-//			} else if (secondChar == 79) {	// function key
-//				 if (firstChar == 80) System.out.print("F1");
-//				 if (firstChar == 81) System.out.print("F2");
-//			} else if (secondChar == 0) {
-//				System.out.print("esc");
-//			}
-//		}
-		
-		// Read all posible chars
 		if (firstChar == 27) {
 			secondChar = System.in.read();
-			if (secondChar == 0) System.out.print("esc");
+			
+			if (secondChar == 91) {
+				thirdChar = System.in.read();
+				if (thirdChar == 65) System.out.print("arrow up");
+				if (thirdChar == 66) System.out.print("arrow down");
+				if (thirdChar == 67) System.out.print("arrow right");
+				if (thirdChar == 68) System.out.print("arrow left");
+			} else if (secondChar == 79) {
+				thirdChar = System.in.read();
+				if (thirdChar == 80) System.out.print("F1");
+				if (thirdChar == 81) System.out.print("F2");
+			} else if (secondChar == 58) {
+				System.out.print(returnColorString("Enter command:", Colors.BLUE.getColor()));
+				// Enter NORMAL mode
+			} else {
+				// Enter NORMAL mode
+			}
+			
+			firstChar = 0; // set first char to ASCII NULL to avoid print
 		}
 		
-		if (firstChar == 27 && secondChar == 91) { // Arrow keys
-			thirdChar = System.in.read();
-			if (thirdChar == 65) System.out.print("arrow up");
-			if (thirdChar == 66) System.out.print("arrow down");
-			if (thirdChar == 67) System.out.print("arrow right");
-			if (thirdChar == 68) System.out.print("arrow left");
-		} else if (firstChar == 27 && secondChar == 79) { // Function keys
-			thirdChar = System.in.read();
-			if (thirdChar == 80) System.out.print("F1");
-			if (thirdChar == 81) System.out.print("F2");
-		}
-		
-		if (firstChar == 27) firstChar = 0;
 	}
 	
 	protected boolean getLoop() {
@@ -80,7 +68,7 @@ public abstract class Screen {
 	}
 	
 	
-	protected String printCustomString(String content, String color) {
+	protected String returnColorString(String content, String color) {
         return ("\033[" + ";" + ";" + color + "m" + content + "\033[0m");
     }
 
