@@ -8,13 +8,15 @@ public abstract class Screen {
 
 	
 	private int row, col;
-	private int statusHeight = 1;
+	private int statusHeight = 2;
 	private boolean loop = false;
 	
 	protected int firstChar;
 	
+	private Mode mode;
 	
 	public Screen(int row, int col) {
+		mode = Mode.INSERT_MODE;
 		this.loop = true;
 		resizeScreen(row, col);
 	}
@@ -29,24 +31,33 @@ public abstract class Screen {
 			System.out.print("\n");
 		}
 		
+		Mode originalMode;
 		if (firstChar == 27) {
+			originalMode = mode;
+			changeMode(Mode.NORMAL_MODE);
 			secondChar = System.in.read();
 			
+			// Handle special characters and assign NORMAL MODE if ESC key pressed
 			if (secondChar == 91) {
+				changeMode(originalMode);
 				thirdChar = System.in.read();
 				if (thirdChar == 65) System.out.print("arrow up");
 				if (thirdChar == 66) System.out.print("arrow down");
 				if (thirdChar == 67) System.out.print("arrow right");
 				if (thirdChar == 68) System.out.print("arrow left");
 			} else if (secondChar == 79) {
+				changeMode(originalMode);
 				thirdChar = System.in.read();
 				if (thirdChar == 80) System.out.print("F1");
 				if (thirdChar == 81) System.out.print("F2");
-			} else if (secondChar == 58) {
-				System.out.print(returnColorString("Enter command:", Colors.BLUE.getColor()));
-				// Enter NORMAL mode
 			} else {
-				// Enter NORMAL mode
+				//changeMode(Mode.NORMAL_MODE);
+			}
+			
+			// Enter EX MODE if second char is ":" and if mode is NORMAL MODE
+			if (secondChar == 58 && mode == Mode.NORMAL_MODE) {
+				changeMode(Mode.EX_MODE);
+				System.out.print(returnColorString("Enter command:", Colors.BLUE.getColor()));
 			}
 			
 			firstChar = 0; // set first char to ASCII NULL to avoid print
@@ -54,12 +65,18 @@ public abstract class Screen {
 		
 	}
 	
+	private void changeMode(Mode mode) {
+		this.mode = mode;
+		printStatusBar();
+	}
+
 	protected boolean getLoop() {
 		return loop;
 	}
 	
 	protected void printStatusBar() {
-		System.out.print("NotVim text editor"); // Make this look nicer
+		System.out.println("NotVim text editor"); // Make this look nicer
+		System.out.print(mode.getName());
 	}
 	
 	private void resizeScreen(int row, int col) {
