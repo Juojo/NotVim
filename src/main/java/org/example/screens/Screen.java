@@ -49,7 +49,7 @@ public abstract class Screen {
 					if (thirdChar == 81) System.out.print("F2");
 				}
 				
-				// Handle custom binds if pressed after 27
+				// Handle custom binds if pressed after 27:
 				// Enter EX MODE if second char is ":" and if mode is NORMAL MODE
 				if (secondChar == 58 && mode == Mode.NORMAL_MODE) {
 					changeMode(Mode.EX_MODE);
@@ -80,8 +80,10 @@ public abstract class Screen {
 	}
 	
 	private void changeMode(Mode mode) {
-		this.mode = mode;
-		printStatusBar();
+		if (this.mode != mode) {
+			this.mode = mode;
+			printStatusBar();
+		}
 	}
 
 	protected boolean getLoop() {
