@@ -3,6 +3,7 @@ package org.example.screens;
 import java.io.IOException;
 
 import org.example.util.Colors;
+import org.example.util.Util;
 
 public abstract class Screen {
 
@@ -91,8 +92,14 @@ public abstract class Screen {
 	}
 	
 	protected void printStatusBar() {
+		Util.saveCursorPosition();
+		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
+		
+		// Print status-bar
 		System.out.print("NotVim text editor\r\n"); // Make this look nicer
 		System.out.print(mode.getName());
+		
+		Util.restoreCursorPosition();
 	}
 	
 	private void resizeScreen(int row, int col) {
