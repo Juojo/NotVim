@@ -2,6 +2,7 @@ package org.example.screens;
 
 import java.io.IOException;
 
+import org.example.util.Colors;
 import org.example.util.Util;
 
 public class TextViewer extends Screen {
@@ -12,7 +13,7 @@ public class TextViewer extends Screen {
 	
 		// Print initial screen
 		for (int i = 0; i < row-super.getStatusHeight(); i++) {
-			System.out.print("~\r\n");
+			System.out.printf("%s\r\n", super.returnColorString("~", Colors.BLUE.getFgColor(), null));
 		}
 		printStatusBar();
 		

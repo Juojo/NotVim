@@ -1,6 +1,7 @@
 package org.example.screens;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.example.util.Colors;
 import org.example.util.Util;
@@ -54,7 +55,7 @@ public abstract class Screen {
 				// Enter EX MODE if second char is ":" and if mode is NORMAL MODE
 				if (secondChar == 58 && mode == Mode.NORMAL_MODE) {
 					changeMode(Mode.EX_MODE);
-					System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor()));
+					System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor(), ""));
 				}
 				
 				firstChar = 0; // set first char to ASCII NULL to avoid print and exit cycle
@@ -96,8 +97,14 @@ public abstract class Screen {
 		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
 		
 		// Print status-bar
-		System.out.print("NotVim text editor\r\n"); // Make this look nicer
-		System.out.print("{ " + returnColorString(mode.getName(), Colors.WHITE.getFgColor()) + " }");
+		for (int i = 0; i < col; i++) {
+			System.out.print(returnColorString(" ", "", Colors.RED.getBgColor()));
+		}
+		Util.moveCursorToColumn(0);
+		System.out.print(returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()) + "\r\n");
+		if (mode == Mode.INSERT_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		else if (mode == Mode.NORMAL_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		
 		
 		Util.restoreCursorPosition();
 	}
@@ -108,8 +115,14 @@ public abstract class Screen {
 	}
 	
 	
-	protected String returnColorString(String content, String color) {
-        return ("\033[" + ";" + ";" + color + "m" + content + "\033[0m");
+	protected String returnColorString(String content, String fg, String bg) {
+		if (bg == null || bg == "") {
+			return ("\033[" + ";" + ";" + fg + "m" + content + "\033[0m");
+		} else {
+			return ("\033[" + fg + ";" + bg + "m" + content + "\033[0m");
+		}
+		
+        
     }
 
 	protected int getStatusHeight() {

@@ -23,5 +23,10 @@ public abstract class Util {
 		// Restore original cursor position in DEC and SCO
 		System.out.print("\033 8\033[u");
 	}
+
+	public static void moveCursorToColumn(int position) {
+		System.out.printf("\033[%dG", position);
+		
+	}
 	
 }
