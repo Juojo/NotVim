@@ -54,7 +54,7 @@ public abstract class Screen {
 				// Enter EX MODE if second char is ":" and if mode is NORMAL MODE
 				if (secondChar == 58 && mode == Mode.NORMAL_MODE) {
 					changeMode(Mode.EX_MODE);
-					System.out.print(returnColorString("Enter command:", Colors.BLUE.getColor()));
+					System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor()));
 				}
 				
 				firstChar = 0; // set first char to ASCII NULL to avoid print and exit cycle
@@ -97,7 +97,7 @@ public abstract class Screen {
 		
 		// Print status-bar
 		System.out.print("NotVim text editor\r\n"); // Make this look nicer
-		System.out.print(mode.getName());
+		System.out.print("{ " + returnColorString(mode.getName(), Colors.WHITE.getFgColor()) + " }");
 		
 		Util.restoreCursorPosition();
 	}

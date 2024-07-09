@@ -2,19 +2,21 @@ package org.example.util;
 
 public enum Colors {
 
-	DEFAULT(""),
-    RED("31"),
-	WHITE("97"),
-	BLUE("34");
+	DEFAULT("", ""),
+    RED("31", ""),
+	WHITE("97", ""),
+	BLUE("34", "104");
 
-    private final String color;
+    private final String fg;
+    private final String bg;
 
-    Colors(String color) {
-        this.color = color;
+    Colors(String fg, String bg) {
+        this.fg = fg;
+        this.bg = bg;
     }
     
-    public String getColor() {
-    	return color;
+    public String getFgColor() {
+    	return fg;
     }
 
 }
