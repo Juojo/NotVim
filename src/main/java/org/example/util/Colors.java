@@ -2,10 +2,13 @@ package org.example.util;
 
 public enum Colors {
 
-	DEFAULT("", ""),
-    RED("31", ""),
-	WHITE("97", ""),
-	BLUE("34", "104");
+	DEFAULT("", ""), // or 39, 49
+    RED("31", "41"),
+    GREEN("32", "42"),
+	WHITE("97", "47"),
+	BLACK("90", "100"),
+	BLUE("34", "104"),
+	MAGENTA("95", "105");
 
     private final String fg;
     private final String bg;
@@ -17,6 +20,10 @@ public enum Colors {
     
     public String getFgColor() {
     	return fg;
+    }
+    
+    public String getBgColor() {
+    	return bg;
     }
 
 }
