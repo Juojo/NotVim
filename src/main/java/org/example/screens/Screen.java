@@ -91,7 +91,7 @@ public abstract class Screen {
 	}
 	
 	protected void printStatusBar() {
-		System.out.println("NotVim text editor"); // Make this look nicer
+		System.out.print("NotVim text editor\r\n"); // Make this look nicer
 		System.out.print(mode.getName());
 	}
 	
