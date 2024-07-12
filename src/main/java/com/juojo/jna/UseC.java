@@ -1,4 +1,4 @@
-package org.example.jna;
+package com.juojo.jna;
 
 public class UseC {
 

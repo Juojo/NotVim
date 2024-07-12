@@ -1,4 +1,4 @@
-package org.example.screens;
+package com.juojo.screens;
 
 public enum Mode {
 

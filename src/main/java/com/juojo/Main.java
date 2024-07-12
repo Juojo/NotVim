@@ -1,10 +1,10 @@
-package org.example;
+package com.juojo;
 
-import org.example.jna.Ioctl;
-import org.example.jna.UseC;
-import org.example.screens.Screen;
-import org.example.screens.TextViewer;
-import org.example.util.Util;
+import com.juojo.jna.Ioctl;
+import com.juojo.jna.UseC;
+import com.juojo.screens.Screen;
+import com.juojo.screens.TextViewer;
+import com.juojo.util.Util;
 
 public class Main {
 	

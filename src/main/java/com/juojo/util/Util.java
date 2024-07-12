@@ -1,4 +1,4 @@
-package org.example.util;
+package com.juojo.util;
 
 public abstract class Util {
 

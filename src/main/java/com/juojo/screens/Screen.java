@@ -1,9 +1,9 @@
-package org.example.screens;
+package com.juojo.screens;
 
 import java.io.IOException;
 
-import org.example.util.Colors;
-import org.example.util.Util;
+import com.juojo.util.Colors;
+import com.juojo.util.Util;
 
 public abstract class Screen {
 
