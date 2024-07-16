@@ -109,7 +109,13 @@ public abstract class Screen {
 	private void changeMode(Mode mode) {
 		if (this.mode != mode) {
 			this.mode = mode;
-			printStatusBar();
+			printStatusBar(true);
+		}
+		
+		if (mode == Mode.EX_MODE) {
+			Util.moveCursor(row, 0);
+		} else if (mode != Mode.EX_MODE) {
+			Util.moveCursor(0, 0); // Replace this with last cursor position
 		}
 	}
 
@@ -117,18 +123,30 @@ public abstract class Screen {
 		return loop;
 	}
 	
-	protected void printStatusBar() {
+	protected void printStatusBar(boolean noTitle) {
 		Util.saveCursorPosition();
 		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
-		
+
 		// Print status-bar
-		for (int i = 0; i < col; i++) {
-			System.out.print(returnColorString(" ", "", Colors.RED.getBgColor()));
+		if (noTitle == false) {
+			for (int i = 0; i < col; i++) {
+				System.out.print(returnColorString(" ", "", Colors.RED.getBgColor()));
+			}
+			Util.moveCursorToColumn(0);
+			
+			System.out.print(returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()));
 		}
-		Util.moveCursorToColumn(0);
-		System.out.print(returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()) + "\r\n");
+
+		System.out.print("\r\n");
+		
 		if (mode == Mode.INSERT_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
 		else if (mode == Mode.NORMAL_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		else if (mode == Mode.EX_MODE) {
+			for (int i = 0; i < col; i++) {
+				System.out.print(" ");
+			}
+			Util.moveCursorToColumn(0);
+		}
 		
 		
 		Util.restoreCursorPosition();

@@ -15,7 +15,7 @@ public class TextViewer extends Screen {
 		for (int i = 0; i < row-super.getStatusHeight(); i++) {
 			System.out.printf("%s\r\n", super.returnColorString("~", Colors.BLUE.getFgColor(), null));
 		}
-		printStatusBar();
+		printStatusBar(false);
 		
 		Util.moveCursorHome();
 		
