@@ -14,7 +14,7 @@ public abstract class Screen {
 	
 	protected int firstChar;
 	
-	private Mode mode;
+	protected Mode mode;
 	
 	public Screen(int row, int col) {
 		mode = Mode.INSERT_MODE;
@@ -73,10 +73,14 @@ public abstract class Screen {
 			
 			if (charCode == 105) { // i
 				changeMode(Mode.INSERT_MODE);
-			} else if (charCode == 58) {
+			} else if (charCode == 58) { // :
 				changeMode(Mode.EX_MODE);
 				System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor(), ""));
 			}
+			
+			// u -> undo
+			// d -> delete word
+			
 			
 			break;
 		}

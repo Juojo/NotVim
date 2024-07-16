@@ -20,13 +20,14 @@ public class TextViewer extends Screen {
 		Util.moveCursorHome();
 		
 		// Handle key and print char
-        while (super.getLoop()) { // 113 == "q"
+        while (super.getLoop()) {
 			try {
 				handleKey();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.print((char) super.firstChar);
+			
+			if (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE) System.out.print((char) super.firstChar);
 		}
 	}
 
