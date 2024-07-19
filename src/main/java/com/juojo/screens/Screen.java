@@ -50,7 +50,7 @@ public abstract class Screen {
 					if (thirdChar == 81) System.out.print("F2");
 				}
 				
-				firstChar = 0; // set first char to ASCII NULL to avoid print and exit cycle
+				firstChar = secondChar;
 			} else {
 				firstChar = 27;
 			}
