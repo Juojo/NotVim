@@ -1,6 +1,8 @@
 package com.juojo.screens;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
@@ -65,6 +67,8 @@ public abstract class Screen {
 		// Handle custom binds for all modes
 		if (charCode == 113) { // q
 			loop = false;
+		} else if (charCode == 13 || charCode == 10) { // Enter
+			System.out.print("");
 		}
 		
 		// Handle custom binds for each mode
@@ -75,7 +79,7 @@ public abstract class Screen {
 				changeMode(Mode.INSERT_MODE);
 			} else if (charCode == 58) { // :
 				changeMode(Mode.EX_MODE);
-				System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor(), ""));
+				//System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor(), ""));
 			}
 			
 			// u -> undo
@@ -93,6 +97,21 @@ public abstract class Screen {
 			break;
 		}
 		case EX_MODE: {
+			List<Integer> charCodeList = new ArrayList<>();
+			
+			if (charCode != 27) {
+				if (charCode != 13 && charCode != 10) {
+					charCodeList.add(charCode);
+				} else {
+					cleanRow();
+					// Execute command
+					
+					changeMode(Mode.NORMAL_MODE);
+				}
+			}
+			
+			// Transform charCodeList to string
+			// if string == command string (":q", ":w", ":wq")
 			
 			break;
 		}
@@ -104,6 +123,14 @@ public abstract class Screen {
 			throw new IllegalArgumentException("Unexpected value: " + actualMode);
 		}
 		
+	}
+
+	private void cleanRow() {
+		Util.moveCursorToColumn(0);
+		for (int i = 0; i < col; i++) {
+			System.out.print(" ");
+		}
+		Util.moveCursorToColumn(0);
 	}
 
 	private void changeMode(Mode mode) {
@@ -138,6 +165,7 @@ public abstract class Screen {
 		}
 
 		System.out.print("\r\n");
+		cleanRow();
 		
 		if (mode == Mode.INSERT_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
 		else if (mode == Mode.NORMAL_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
