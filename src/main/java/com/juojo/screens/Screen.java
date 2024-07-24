@@ -18,6 +18,8 @@ public abstract class Screen {
 	
 	protected Mode mode;
 	
+	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
+	
 	public Screen(int row, int col) {
 		mode = Mode.INSERT_MODE;
 		this.loop = true;
@@ -79,7 +81,6 @@ public abstract class Screen {
 				changeMode(Mode.INSERT_MODE);
 			} else if (charCode == 58) { // :
 				changeMode(Mode.EX_MODE);
-				//System.out.print(returnColorString("Enter command:", Colors.BLUE.getFgColor(), ""));
 			}
 			
 			// u -> undo
@@ -97,18 +98,22 @@ public abstract class Screen {
 			break;
 		}
 		case EX_MODE: {
-			List<Integer> charCodeList = new ArrayList<>();
 			
 			if (charCode != 27) {
 				if (charCode != 13 && charCode != 10) {
 					charCodeList.add(charCode);
+					//System.out.print(charCodeList.getLast());
 				} else {
 					cleanRow();
 					// Execute command
 					
 					changeMode(Mode.NORMAL_MODE);
+					//System.out.print(charCodeList.size());
+					charCodeList.clear();
 				}
 			}
+			
+			
 			
 			// Transform charCodeList to string
 			// if string == command string (":q", ":w", ":wq")
