@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
 
@@ -19,6 +20,10 @@ public abstract class Screen {
 	protected Mode mode;
 	
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
+	
+	// delete this
+	String userInput = ":q";
+	
 	
 	public Screen(int row, int col) {
 		mode = Mode.INSERT_MODE;
@@ -105,10 +110,9 @@ public abstract class Screen {
 					//System.out.print(charCodeList.getLast());
 				} else {
 					cleanRow();
-					// Execute command
+					new CreateCommandInstance(userInput);
 					
-					changeMode(Mode.NORMAL_MODE);
-					//System.out.print(charCodeList.size());
+					//changeMode(Mode.NORMAL_MODE);
 					charCodeList.clear();
 				}
 			}
