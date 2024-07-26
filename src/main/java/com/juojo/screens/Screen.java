@@ -63,8 +63,9 @@ public abstract class Screen {
 			}
 		}
 		
-		if (firstChar == 0) handleCustomBinds(mode, secondChar); // if firstChar is ASCII NULL (0) it means that it was pressed after ESC (27), so the char code is stored on secondChar 
-		else handleCustomBinds(mode, firstChar);
+//		if (firstChar == 0) handleCustomBinds(mode, secondChar); // if firstChar is ASCII NULL (0) it means that it was pressed after ESC (27), so the char code is stored on secondChar 
+//		else handleCustomBinds(mode, firstChar);
+		handleCustomBinds(mode, firstChar);
 		
 	}
 	
