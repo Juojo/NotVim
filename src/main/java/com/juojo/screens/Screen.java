@@ -20,9 +20,7 @@ public abstract class Screen {
 	protected Mode mode;
 	
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
-	
-	// delete this
-	String userInput = ":q";
+	private String userInput = "";
 	
 	
 	public Screen(int row, int col) {
@@ -107,20 +105,18 @@ public abstract class Screen {
 			if (charCode != 27) {
 				if (charCode != 13 && charCode != 10) {
 					charCodeList.add(charCode);
-					//System.out.print(charCodeList.getLast());
 				} else {
 					cleanRow();
-					new CreateCommandInstance(userInput);
+					
+					userInput = charCodeListToString(charCodeList);
+					//new CreateCommandInstance(userInput);
+					System.out.print(userInput);
 					
 					//changeMode(Mode.NORMAL_MODE);
 					charCodeList.clear();
+					userInput = "";
 				}
 			}
-			
-			
-			
-			// Transform charCodeList to string
-			// if string == command string (":q", ":w", ":wq")
 			
 			break;
 		}
@@ -132,6 +128,18 @@ public abstract class Screen {
 			throw new IllegalArgumentException("Unexpected value: " + actualMode);
 		}
 		
+	}
+
+	private String charCodeListToString(List<Integer> charCodeList) {
+		String output = "";
+		int listLenght = charCodeList.size();
+		
+		for (int i = 0; i < listLenght; i++) {
+			output += Character.toString(charCodeList.getFirst());
+			charCodeList.removeFirst();
+		}
+		
+		return output;
 	}
 
 	private void cleanRow() {
