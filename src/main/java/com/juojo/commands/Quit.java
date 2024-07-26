@@ -1,5 +1,7 @@
 package com.juojo.commands;
 
+import com.juojo.screens.Screen;
+
 public class Quit extends Command {
 
 	private static final String name = "Quit";
@@ -12,7 +14,8 @@ public class Quit extends Command {
 	
 	@Override
 	protected void executeCommand() {
-		System.out.print("Command " + name + " executed succesfully."); // Replace this with new Alert();
+		//System.out.print("Command " + name + " executed succesfully."); // Replace this with new Alert();
+		Screen.endLoop();
 	}
 
 }
