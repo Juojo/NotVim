@@ -13,7 +13,7 @@ public abstract class Screen {
 	
 	private int row, col;
 	private int statusHeight = 2;
-	private boolean loop = false;
+	private static boolean loop = false;
 	
 	protected int firstChar;
 	
@@ -57,10 +57,6 @@ public abstract class Screen {
 					if (thirdChar == 81) System.out.print("F2");
 				}
 				
-				if (secondChar == 58) { // :
-					charCodeList.add(58);
-				}
-				
 				firstChar = secondChar;
 			} else {
 				firstChar = 27;
@@ -74,9 +70,7 @@ public abstract class Screen {
 	
 	private void handleCustomBinds(Mode actualMode, int charCode) {
 		// Handle custom binds for all modes
-		if (charCode == 113) { // q
-			loop = false;
-		} else if (charCode == 13 || charCode == 10) { // Enter
+		if (charCode == 13 || charCode == 10) { // Enter
 			System.out.print("");
 		}
 		
@@ -112,11 +106,15 @@ public abstract class Screen {
 				} else {
 					cleanRow();
 					
-					userInput = charCodeListToString(charCodeList);
-					//new CreateCommandInstance(userInput);
-					System.out.print(userInput);
+					// Remove all unnecessary : from the start of charCodeList
+					while (charCodeList.getFirst() == 58) {
+						charCodeList.removeFirst();
+					}
 					
-					//changeMode(Mode.NORMAL_MODE);
+					userInput = charCodeListToString(charCodeList);
+					new CreateCommandInstance(userInput);
+					
+					changeMode(Mode.NORMAL_MODE);
 					charCodeList.clear();
 					userInput = "";
 				}
@@ -170,10 +168,6 @@ public abstract class Screen {
 			userInput = "";
 		}
 	}
-
-	protected boolean getLoop() {
-		return loop;
-	}
 	
 	protected void printStatusBar(boolean noTitle) {
 		Util.saveCursorPosition();
@@ -210,7 +204,6 @@ public abstract class Screen {
 		this.col = col;
 	}
 	
-	
 	protected String returnColorString(String content, String fg, String bg) {
 		if (bg == null || bg == "") {
 			return ("\033[" + ";" + ";" + fg + "m" + content + "\033[0m");
@@ -221,8 +214,16 @@ public abstract class Screen {
         
     }
 
+	protected boolean getLoop() {
+		return loop;
+	}
+	
 	protected int getStatusHeight() {
 		return statusHeight;
+	}
+
+	public static void endLoop() {
+		loop = false;
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");
