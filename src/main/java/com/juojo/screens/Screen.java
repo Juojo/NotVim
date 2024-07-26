@@ -57,6 +57,10 @@ public abstract class Screen {
 					if (thirdChar == 81) System.out.print("F2");
 				}
 				
+				if (secondChar == 58) { // :
+					charCodeList.add(58);
+				}
+				
 				firstChar = secondChar;
 			} else {
 				firstChar = 27;
@@ -160,6 +164,10 @@ public abstract class Screen {
 			Util.moveCursor(row, 0);
 		} else if (mode != Mode.EX_MODE) {
 			Util.moveCursor(0, 0); // Replace this with last cursor position
+			
+			// Make sure incomplete commands are cleaned
+			charCodeList.clear();
+			userInput = "";
 		}
 	}
 
