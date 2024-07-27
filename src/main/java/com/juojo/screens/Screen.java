@@ -154,7 +154,7 @@ public abstract class Screen {
 	private void changeMode(Mode mode) {
 		if (this.mode != mode) {
 			this.mode = mode;
-			printStatusBar(true);
+			//printStatusBar(true);
 		}
 		
 		if (mode == Mode.EX_MODE) {
