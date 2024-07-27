@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.juojo.commands.CreateCommandInstance;
+import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
 
 public abstract class Screen {
 
 	
-	private int row, col;
+	private static int row, col;
 	private int statusHeight = 2;
 	private static boolean loop = false;
 	
@@ -80,6 +81,7 @@ public abstract class Screen {
 			if (charCode == 105) { // i
 				changeMode(Mode.INSERT_MODE);
 			} else if (charCode == 58) { // :
+				Alerts.setActiveAlertFalse();
 				changeMode(Mode.EX_MODE);
 			}
 			
@@ -154,7 +156,14 @@ public abstract class Screen {
 	private void changeMode(Mode mode) {
 		if (this.mode != mode) {
 			this.mode = mode;
-			//printStatusBar(true);
+			
+			if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
+				Alerts.setActiveAlertFalse();
+				printStatusBar(false);
+			} else {
+				printStatusBar(true);
+			}
+				
 		}
 		
 		if (mode == Mode.EX_MODE) {
@@ -168,32 +177,28 @@ public abstract class Screen {
 		}
 	}
 	
-	protected void printStatusBar(boolean noTitle) {
+	protected void printStatusBar(boolean modeOnTitle) {
 		Util.saveCursorPosition();
 		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
 
 		// Print status-bar
-		if (noTitle == false) {
-			for (int i = 0; i < col; i++) {
-				System.out.print(Util.returnColorString(" ", Colors.DEFAULT, Colors.RED));
-			}
-			Util.moveCursorToColumn(0);
-			
-			System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE, Colors.RED));
+		for (int i = 0; i < col; i++) {
+			System.out.print(Util.returnColorString(" ", Colors.DEFAULT, Colors.RED));
+		}
+		Util.moveCursorToColumn(0);
+
+		System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE, Colors.RED));
+		
+		if (modeOnTitle) { // Can replace this with if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE)
+			System.out.print(Util.returnColorString("  --  " + mode.getName() + "  --  ", Colors.BLUE, Colors.RED));
 		}
 
 		System.out.print("\r\n");
-		cleanRow();
-		
-		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
-		else if (mode == Mode.NORMAL_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.BLUE, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
-		else if (mode == Mode.EX_MODE) {
-			for (int i = 0; i < col; i++) {
-				System.out.print(" ");
-			}
-			Util.moveCursorToColumn(0);
+		if (Alerts.getActiveAlert() == false) { // Don't clean last row if an alert is active
+			cleanRow();
 		}
 		
+		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		
 		Util.restoreCursorPosition();
 	}
@@ -202,8 +207,6 @@ public abstract class Screen {
 		this.row = row;
 		this.col = col;
 	}
-	
-	
 
 	protected boolean getLoop() {
 		return loop;
@@ -215,6 +218,10 @@ public abstract class Screen {
 
 	public static void endLoop() {
 		loop = false;
+	}
+	
+	public static int getRow() {
+		return row;
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");

@@ -2,10 +2,11 @@ package com.juojo.util;
 
 public enum Alerts {
 
-	COMMAND_NOT_FOUND("Command not found", null, Colors.RED, Colors.DEFAULT);
+	COMMAND_NOT_FOUND("Command not found", null, Colors.RED, Colors.MAGENTA);
 	
 	private String name, desc;
 	private Colors fg, bg;
+	private static boolean activeAlert = false;
 	
 	Alerts(String name, String desc, Colors fg, Colors bg) {
 		this.name = name;
@@ -16,6 +17,8 @@ public enum Alerts {
 	
 	public void newAlert() {
 		String text = Util.returnColorString(name, fg, bg);
+		
+		activeAlert = true;
 		System.out.print(text);
 	}
 	
@@ -29,6 +32,14 @@ public enum Alerts {
 		}
 		
 		System.out.print(Util.returnColorString(text, fg, bg));
+	}
+	
+	public static boolean getActiveAlert() {
+		return activeAlert;
+	}
+	
+	public static void setActiveAlertFalse() {
+		activeAlert = false;
 	}
 	
 }
