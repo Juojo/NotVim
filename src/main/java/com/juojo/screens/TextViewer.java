@@ -13,7 +13,7 @@ public class TextViewer extends Screen {
 	
 		// Print initial screen
 		for (int i = 0; i < row-super.getStatusHeight(); i++) {
-			System.out.printf("%s\r\n", super.returnColorString("~", Colors.BLUE.getFgColor(), null));
+			System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE.getFgColor(), null));
 		}
 		printStatusBar(false);
 		

@@ -2,6 +2,14 @@ package com.juojo.util;
 
 public abstract class Util {
 
+	public static String returnColorString(String content, String fg, String bg) {
+		if (bg == null || bg == "") {
+			return ("\033[" + ";" + ";" + fg + "m" + content + "\033[0m");
+		} else {
+			return ("\033[" + fg + ";" + bg + "m" + content + "\033[0m");
+		}
+    }
+	
 	public static void clearScreen() {
 		System.out.print("\033[2J");
 	}

@@ -63,8 +63,6 @@ public abstract class Screen {
 			}
 		}
 		
-//		if (firstChar == 0) handleCustomBinds(mode, secondChar); // if firstChar is ASCII NULL (0) it means that it was pressed after ESC (27), so the char code is stored on secondChar 
-//		else handleCustomBinds(mode, firstChar);
 		handleCustomBinds(mode, firstChar);
 		
 	}
@@ -177,18 +175,18 @@ public abstract class Screen {
 		// Print status-bar
 		if (noTitle == false) {
 			for (int i = 0; i < col; i++) {
-				System.out.print(returnColorString(" ", "", Colors.RED.getBgColor()));
+				System.out.print(Util.returnColorString(" ", "", Colors.RED.getBgColor()));
 			}
 			Util.moveCursorToColumn(0);
 			
-			System.out.print(returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()));
+			System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()));
 		}
 
 		System.out.print("\r\n");
 		cleanRow();
 		
-		if (mode == Mode.INSERT_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
-		else if (mode == Mode.NORMAL_MODE) System.out.print(returnColorString("-- ", Colors.WHITE.getFgColor(), "") + returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE.getFgColor(), "") + Util.returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + Util.returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		else if (mode == Mode.NORMAL_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE.getFgColor(), "") + Util.returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + Util.returnColorString(" --", Colors.WHITE.getFgColor(), ""));
 		else if (mode == Mode.EX_MODE) {
 			for (int i = 0; i < col; i++) {
 				System.out.print(" ");
@@ -205,15 +203,7 @@ public abstract class Screen {
 		this.col = col;
 	}
 	
-	protected String returnColorString(String content, String fg, String bg) {
-		if (bg == null || bg == "") {
-			return ("\033[" + ";" + ";" + fg + "m" + content + "\033[0m");
-		} else {
-			return ("\033[" + fg + ";" + bg + "m" + content + "\033[0m");
-		}
-		
-        
-    }
+	
 
 	protected boolean getLoop() {
 		return loop;
