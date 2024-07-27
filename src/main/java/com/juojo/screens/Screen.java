@@ -175,18 +175,18 @@ public abstract class Screen {
 		// Print status-bar
 		if (noTitle == false) {
 			for (int i = 0; i < col; i++) {
-				System.out.print(Util.returnColorString(" ", "", Colors.RED.getBgColor()));
+				System.out.print(Util.returnColorString(" ", Colors.DEFAULT, Colors.RED));
 			}
 			Util.moveCursorToColumn(0);
 			
-			System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE.getFgColor(), Colors.RED.getBgColor()));
+			System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE, Colors.RED));
 		}
 
 		System.out.print("\r\n");
 		cleanRow();
 		
-		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE.getFgColor(), "") + Util.returnColorString(mode.getName(), Colors.RED.getFgColor(), "") + Util.returnColorString(" --", Colors.WHITE.getFgColor(), ""));
-		else if (mode == Mode.NORMAL_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE.getFgColor(), "") + Util.returnColorString(mode.getName(), Colors.BLUE.getFgColor(), "") + Util.returnColorString(" --", Colors.WHITE.getFgColor(), ""));
+		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
+		else if (mode == Mode.NORMAL_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.BLUE, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		else if (mode == Mode.EX_MODE) {
 			for (int i = 0; i < col; i++) {
 				System.out.print(" ");

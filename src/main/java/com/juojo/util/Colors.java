@@ -18,11 +18,11 @@ public enum Colors {
         this.bg = bg;
     }
     
-    public String getFgColor() {
+    public String getFgCode() {
     	return fg;
     }
     
-    public String getBgColor() {
+    public String getBgCode() {
     	return bg;
     }
 
