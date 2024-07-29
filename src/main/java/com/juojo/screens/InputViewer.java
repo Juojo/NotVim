@@ -8,7 +8,7 @@ import com.juojo.util.Util;
 public class InputViewer extends Screen {
 
 	public InputViewer(int row, int col) {
-		super(row, col);
+		super(row, col, false);
 		
 		Util.clearScreen();
 		Util.moveCursorHome();

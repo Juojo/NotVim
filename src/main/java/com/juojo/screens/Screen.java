@@ -15,6 +15,7 @@ public abstract class Screen {
 	private static int row, col;
 	private int statusHeight = 2;
 	private static boolean loop = false;
+	private static boolean canHandleFiles = false;
 	
 	protected int firstChar;
 	
@@ -24,10 +25,11 @@ public abstract class Screen {
 	private String userInput = "";
 	
 	
-	public Screen(int row, int col) {
+	public Screen(int row, int col, boolean canHandleFiles) {
 		mode = Mode.INSERT_MODE;
 		this.loop = true;
 		resizeScreen(row, col);
+		this.canHandleFiles = canHandleFiles;
 	}
 	
 	protected void handleKey() throws IOException {
@@ -222,6 +224,10 @@ public abstract class Screen {
 	
 	public static int getRow() {
 		return row;
+	}
+	
+	public static boolean canHandleFiles() {
+		return canHandleFiles;
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");

@@ -8,7 +8,7 @@ import com.juojo.util.Util;
 public class TextViewer extends Screen {
 	
 	public TextViewer(int row, int col) {
-		super(row, col);	
+		super(row, col, true);	
 		Util.clearScreen();
 	
 		// Print initial screen
