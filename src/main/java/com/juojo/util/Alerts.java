@@ -3,7 +3,8 @@ package com.juojo.util;
 public enum Alerts {
 
 	COMMAND_NOT_FOUND("Command not found", null, Colors.RED, Colors.MAGENTA),
-	OPEN("Open file", null, Colors.RED, Colors.MAGENTA);
+	FILE_NOT_FOUND("Can't open file", "The file was not found", Colors.RED, null),
+	CANT_OPEN_FILE("Can't open file", "The active screen isn't capable of handling files.", Colors.RED, null);
 	
 	private String name, desc;
 	private Colors fg, bg;
@@ -17,14 +18,15 @@ public enum Alerts {
 	}
 	
 	public void newAlert() {
-		String text = Util.returnColorString(name, fg, bg);
-		
-		activeAlert = true;
-		System.out.print(text);
+		printAlert(this.name, this.desc, this.fg, this.bg);
 	}
 	
 	public static void newCustomAlert(String name, String desc, Colors fg, Colors bg) {
-		String text;
+		printAlert(name, desc, fg, bg);
+	}
+	
+	private static void printAlert(String name, String desc, Colors fg, Colors bg) {
+		String text = "";
 		
 		if (name == null || name == "") {
 			text = "";
@@ -51,7 +53,7 @@ public enum Alerts {
 	}
 	
 	public static void setActiveAlertTrue() {
-		// Only use this when need to print without creating a new alert 
+		// Only use this when need to print without creating a new alert
 		activeAlert = true;
 	}
 	
