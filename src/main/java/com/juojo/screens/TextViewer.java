@@ -15,7 +15,7 @@ public class TextViewer extends Screen {
 		for (int i = 0; i < row-super.getStatusHeight(); i++) {
 			System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
 		}
-		printStatusBar(false);
+		printStatusBar(false, super.posX, super.posY, super.exPosX);
 		
 		Util.moveCursorHome();
 		
@@ -27,7 +27,11 @@ public class TextViewer extends Screen {
 				e.printStackTrace();
 			}
 			
-			if (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE) System.out.print((char) super.firstChar);
+			if (super.charCode >= 0 && (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE)) {
+				System.out.print((char) super.charCode);
+				if (super.mode == Mode.INSERT_MODE) super.posX++;
+				if (super.mode == Mode.EX_MODE) super.exPosX++;
+			}
 		}
 	}
 

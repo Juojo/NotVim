@@ -8,6 +8,7 @@ import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
+import com.juojo.virtualkeymapping.VK;
 
 public abstract class Screen {
 
@@ -17,27 +18,30 @@ public abstract class Screen {
 	private static boolean loop = false;
 	private static boolean canHandleFiles = false;
 	
-	protected int firstChar;
+	protected int charCode;
 	
 	protected Mode mode;
 	
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
+	protected int posX = 1, posY = 1;
+	protected int exPosX = 1; // For EX_MODE cursor position
 	
 	public Screen(int row, int col, boolean canHandleFiles) {
 		mode = Mode.INSERT_MODE;
 		this.loop = true;
 		resizeScreen(row, col);
 		this.canHandleFiles = canHandleFiles;
+		Util.moveCursor(posX, posY); // Move cursor to initial position (0; 0)
 	}
 	
 	protected void handleKey() throws IOException {
 		int secondChar = 0, thirdChar = 0;
-		firstChar = System.in.read();
+		charCode = System.in.read();
 		
 		Mode originalMode;
-		while (firstChar == 27) {
+		while (charCode == 27) {
 			originalMode = mode;
 			changeMode(Mode.NORMAL_MODE);
 			
@@ -49,27 +53,46 @@ public abstract class Screen {
 				if (secondChar == 91) {
 					changeMode(originalMode);
 					thirdChar = System.in.read();
-					if (thirdChar == 65) System.out.print("arrow up");
-					if (thirdChar == 66) System.out.print("arrow down");
-					if (thirdChar == 67) System.out.print("arrow right");
-					if (thirdChar == 68) System.out.print("arrow left");
+					if (thirdChar == 65) charCode = VK.ARROW_UP.getCode();
+					if (thirdChar == 66) charCode = VK.ARROW_DOWN.getCode();
+					if (thirdChar == 67) charCode = VK.ARROW_RIGHT.getCode();
+					if (thirdChar == 68) charCode = VK.ARROW_LEFT.getCode();
 				} else if (secondChar == 79) {
 					changeMode(originalMode);
 					thirdChar = System.in.read();
-					if (thirdChar == 80) System.out.print("F1");
-					if (thirdChar == 81) System.out.print("F2");
+					if (thirdChar == 80) charCode = VK.F1.getCode();
+					if (thirdChar == 81) charCode = VK.F2.getCode();
+				} else {
+					charCode = secondChar;
 				}
 				
-				firstChar = secondChar;
 			} else {
-				firstChar = 27;
+				charCode = 27;
 			}
 		}
 		
-		handleCustomBinds(mode, firstChar);
-		
+		handleCustomBinds(mode, charCode);
+		moveCursor(charCode);
 	}
 	
+	private void moveCursor(int charCode) {
+		
+		if (mode != Mode.EX_MODE) {
+			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
+			else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
+			else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
+			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
+			
+			Util.moveCursor(posY, posX); // row, col
+		} else {
+			if      (charCode == VK.ARROW_RIGHT.getCode() && posX < col) exPosX++;
+			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   exPosX--;
+			
+			Util.moveCursorToColumn(exPosX);
+		}
+		
+	}
+
 	private void handleCustomBinds(Mode actualMode, int charCode) {
 		// Handle custom binds for all modes
 		if (charCode == 13 || charCode == 10) { // Enter
@@ -97,6 +120,8 @@ public abstract class Screen {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
 				System.out.print("\n");
+				posY++;
+				posX=0;
 			}
 			
 			break;
@@ -108,6 +133,7 @@ public abstract class Screen {
 					charCodeList.add(charCode);
 				} else {
 					cleanRow();
+					exPosX = 1;
 					
 					// Remove all unnecessary : from the start of charCodeList
 					while (charCodeList.getFirst() == 58) {
@@ -156,31 +182,35 @@ public abstract class Screen {
 	}
 
 	private void changeMode(Mode mode) {
+		int currentX = posX;
+		int currentY = posY;
+		int currentExPosX = exPosX;
+		
 		if (this.mode != mode) {
 			this.mode = mode;
 			
 			if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
 				Alerts.setActiveAlertFalse();
-				printStatusBar(false);
+				printStatusBar(false, currentX, currentY, currentExPosX);
 			} else {
-				printStatusBar(true);
+				printStatusBar(true, currentX, currentY, currentExPosX);
 			}
 				
+			if (mode == Mode.EX_MODE) {
+				Util.moveCursor(row, 0);
+			} else {
+				Util.moveCursor(currentY, currentX);
+				
+				// Make sure incomplete commands are cleaned
+				charCodeList.clear();
+				userInput = "";
+			}
 		}
 		
-		if (mode == Mode.EX_MODE) {
-			Util.moveCursor(row, 0);
-		} else if (mode != Mode.EX_MODE) {
-			Util.moveCursor(0, 0); // Replace this with last cursor position
-			
-			// Make sure incomplete commands are cleaned
-			charCodeList.clear();
-			userInput = "";
-		}
+		
 	}
 	
-	protected void printStatusBar(boolean modeOnTitle) {
-		Util.saveCursorPosition();
+	protected void printStatusBar(boolean modeOnTitle, int currentX, int currentY, int currentExPosX) {
 		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
 
 		// Print status-bar
@@ -202,7 +232,8 @@ public abstract class Screen {
 		
 		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		
-		Util.restoreCursorPosition();
+		if (mode != Mode.EX_MODE) Util.moveCursor(currentY, currentX);
+		else Util.moveCursorToColumn(currentExPosX);
 	}
 	
 	private void resizeScreen(int row, int col) {
