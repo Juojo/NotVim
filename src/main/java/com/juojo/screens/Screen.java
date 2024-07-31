@@ -24,11 +24,13 @@ public abstract class Screen {
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
+	protected int posX = 1, posY = 1;
 	
 	public Screen(int row, int col) {
 		mode = Mode.INSERT_MODE;
 		this.loop = true;
 		resizeScreen(row, col);
+		Util.moveCursor(posX, posY); // Move cursor to initial position (0; 0)
 	}
 	
 	protected void handleKey() throws IOException {
@@ -67,9 +69,19 @@ public abstract class Screen {
 		}
 		
 		handleCustomBinds(mode, charCode);
-		
+		moveCursor(charCode);
 	}
 	
+	private void moveCursor(int charCode) {
+		
+		if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
+		else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
+		else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
+		else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
+		
+		Util.moveCursor(posY, posX); // row, col
+	}
+
 	private void handleCustomBinds(Mode actualMode, int charCode) {
 		// Handle custom binds for all modes
 		if (charCode == 13 || charCode == 10) { // Enter
@@ -171,7 +183,7 @@ public abstract class Screen {
 		if (mode == Mode.EX_MODE) {
 			Util.moveCursor(row, 0);
 		} else if (mode != Mode.EX_MODE) {
-			Util.moveCursor(0, 0); // Replace this with last cursor position
+			//Util.moveCursor(0, 0); // Replace this with last cursor position
 			
 			// Make sure incomplete commands are cleaned
 			charCodeList.clear();

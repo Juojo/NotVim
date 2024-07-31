@@ -9,7 +9,7 @@ public enum VK {
 	F1(-20),
 	F2(-21);
 	
-	private int virtualCode;
+	private final int virtualCode;
 	
 	VK(int virtualCode) {
 		this.virtualCode = virtualCode;
