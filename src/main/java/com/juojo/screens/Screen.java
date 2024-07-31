@@ -25,6 +25,7 @@ public abstract class Screen {
 	private String userInput = "";
 	
 	protected int posX = 1, posY = 1;
+	protected int exPosX = 1; // For EX_MODE cursor position
 	
 	public Screen(int row, int col) {
 		mode = Mode.INSERT_MODE;
@@ -74,12 +75,20 @@ public abstract class Screen {
 	
 	private void moveCursor(int charCode) {
 		
-		if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
-		else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
-		else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
-		else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
+		if (mode != Mode.EX_MODE) {
+			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
+			else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
+			else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
+			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
+			
+			Util.moveCursor(posY, posX); // row, col
+		} else {
+			if      (charCode == VK.ARROW_RIGHT.getCode() && posX < col) exPosX++;
+			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   exPosX--;
+			
+			Util.moveCursorToColumn(exPosX);
+		}
 		
-		Util.moveCursor(posY, posX); // row, col
 	}
 
 	private void handleCustomBinds(Mode actualMode, int charCode) {
@@ -109,6 +118,8 @@ public abstract class Screen {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
 				System.out.print("\n");
+				posY++;
+				posX=0;
 			}
 			
 			break;
@@ -120,6 +131,7 @@ public abstract class Screen {
 					charCodeList.add(charCode);
 				} else {
 					cleanRow();
+					exPosX = 1;
 					
 					// Remove all unnecessary : from the start of charCodeList
 					while (charCodeList.getFirst() == 58) {
@@ -168,31 +180,35 @@ public abstract class Screen {
 	}
 
 	private void changeMode(Mode mode) {
+		int currentX = posX;
+		int currentY = posY;
+		int currentExPosX = exPosX;
+		
 		if (this.mode != mode) {
 			this.mode = mode;
 			
 			if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
 				Alerts.setActiveAlertFalse();
-				printStatusBar(false);
+				printStatusBar(false, currentX, currentY, currentExPosX);
 			} else {
-				printStatusBar(true);
+				printStatusBar(true, currentX, currentY, currentExPosX);
 			}
 				
+			if (mode == Mode.EX_MODE) {
+				Util.moveCursor(row, 0);
+			} else {
+				Util.moveCursor(currentY, currentX);
+				
+				// Make sure incomplete commands are cleaned
+				charCodeList.clear();
+				userInput = "";
+			}
 		}
 		
-		if (mode == Mode.EX_MODE) {
-			Util.moveCursor(row, 0);
-		} else if (mode != Mode.EX_MODE) {
-			//Util.moveCursor(0, 0); // Replace this with last cursor position
-			
-			// Make sure incomplete commands are cleaned
-			charCodeList.clear();
-			userInput = "";
-		}
+		
 	}
 	
-	protected void printStatusBar(boolean modeOnTitle) {
-		Util.saveCursorPosition();
+	protected void printStatusBar(boolean modeOnTitle, int currentX, int currentY, int currentExPosX) {
 		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
 
 		// Print status-bar
@@ -214,7 +230,8 @@ public abstract class Screen {
 		
 		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		
-		Util.restoreCursorPosition();
+		if (mode != Mode.EX_MODE) Util.moveCursor(currentY, currentX);
+		else Util.moveCursorToColumn(currentExPosX);
 	}
 	
 	private void resizeScreen(int row, int col) {
