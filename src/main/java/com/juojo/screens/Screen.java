@@ -8,6 +8,7 @@ import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
+import com.juojo.virtualkeymapping.VK;
 
 public abstract class Screen {
 
@@ -16,7 +17,7 @@ public abstract class Screen {
 	private int statusHeight = 2;
 	private static boolean loop = false;
 	
-	protected int firstChar;
+	protected int charCode;
 	
 	protected Mode mode;
 	
@@ -32,10 +33,10 @@ public abstract class Screen {
 	
 	protected void handleKey() throws IOException {
 		int secondChar = 0, thirdChar = 0;
-		firstChar = System.in.read();
+		charCode = System.in.read();
 		
 		Mode originalMode;
-		while (firstChar == 27) {
+		while (charCode == 27) {
 			originalMode = mode;
 			changeMode(Mode.NORMAL_MODE);
 			
@@ -47,24 +48,25 @@ public abstract class Screen {
 				if (secondChar == 91) {
 					changeMode(originalMode);
 					thirdChar = System.in.read();
-					if (thirdChar == 65) System.out.print("arrow up");
-					if (thirdChar == 66) System.out.print("arrow down");
-					if (thirdChar == 67) System.out.print("arrow right");
-					if (thirdChar == 68) System.out.print("arrow left");
+					if (thirdChar == 65) charCode = VK.ARROW_UP.getCode();
+					if (thirdChar == 66) charCode = VK.ARROW_DOWN.getCode();
+					if (thirdChar == 67) charCode = VK.ARROW_RIGHT.getCode();
+					if (thirdChar == 68) charCode = VK.ARROW_LEFT.getCode();
 				} else if (secondChar == 79) {
 					changeMode(originalMode);
 					thirdChar = System.in.read();
-					if (thirdChar == 80) System.out.print("F1");
-					if (thirdChar == 81) System.out.print("F2");
+					if (thirdChar == 80) charCode = VK.F1.getCode();
+					if (thirdChar == 81) charCode = VK.F2.getCode();
+				} else {
+					charCode = secondChar;
 				}
 				
-				firstChar = secondChar;
 			} else {
-				firstChar = 27;
+				charCode = 27;
 			}
 		}
 		
-		handleCustomBinds(mode, firstChar);
+		handleCustomBinds(mode, charCode);
 		
 	}
 	
