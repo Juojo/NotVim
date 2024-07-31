@@ -27,7 +27,12 @@ public class TextViewer extends Screen {
 				e.printStackTrace();
 			}
 			
-			if (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE) System.out.print((char) super.charCode);
+			if (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE) {
+				if (super.charCode >= 0) {
+					System.out.print((char) super.charCode);
+					super.posX++;
+				}
+			}
 		}
 	}
 
