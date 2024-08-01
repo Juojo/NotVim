@@ -7,6 +7,7 @@ import java.util.Scanner;
 import com.juojo.screens.Screen;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
+import com.juojo.util.Util;
 
 public class Open extends Command {
 
@@ -26,8 +27,17 @@ public class Open extends Command {
 		
 		if (Screen.canHandleFiles()) { // Verify that the screen is capable of handling files.
 			try {
+				Screen.moveCursor(1, 1);
+				Screen.cleanTextArea();
+				
 				File file = new File(path);
 				Scanner fileReader = new Scanner(file);
+				
+				for (int i = 0; i < Screen.getRow()-Screen.getStatusHeight(); i++) {
+					System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+				}
+				
+				Screen.moveCursor(1, 1);
 				
 				while (fileReader.hasNextLine()) {
 					data = fileReader.nextLine();

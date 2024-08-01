@@ -2,6 +2,7 @@ package com.juojo.screens;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.juojo.commands.CreateCommandInstance;
@@ -14,7 +15,7 @@ public abstract class Screen {
 
 	
 	private static int row, col;
-	private int statusHeight = 2;
+	private static int statusHeight = 2;
 	private static boolean loop = false;
 	private static boolean canHandleFiles = false;
 	
@@ -25,7 +26,8 @@ public abstract class Screen {
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
-	protected int posX = 1, posY = 1;
+	protected static int posX = 1;
+	protected static int posY = 1;
 	protected int exPosX = 1; // For EX_MODE cursor position
 	
 	public Screen(int row, int col, boolean canHandleFiles) {
@@ -72,10 +74,10 @@ public abstract class Screen {
 		}
 		
 		handleCustomBinds(mode, charCode);
-		moveCursor(charCode);
+		handleMovementKeys(charCode);
 	}
 	
-	private void moveCursor(int charCode) {
+	private void handleMovementKeys(int charCode) {
 		
 		if (mode != Mode.EX_MODE) {
 			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
@@ -177,14 +179,6 @@ public abstract class Screen {
 		return output;
 	}
 
-	private void cleanRow() {
-		Util.moveCursorToColumn(0);
-		for (int i = 0; i < col; i++) {
-			System.out.print(" ");
-		}
-		Util.moveCursorToColumn(0);
-	}
-
 	private void changeMode(Mode mode) {
 		int currentX = posX;
 		int currentY = posY;
@@ -249,7 +243,7 @@ public abstract class Screen {
 		return loop;
 	}
 	
-	protected int getStatusHeight() {
+	public static int getStatusHeight() {
 		return statusHeight;
 	}
 
@@ -263,6 +257,46 @@ public abstract class Screen {
 	
 	public static boolean canHandleFiles() {
 		return canHandleFiles;
+	}
+	
+	public static void moveCursor(int x, int y) {
+		posX = x;
+		posY = y;
+		
+		Util.moveCursor(posY, posX);
+	}
+	
+	public static void moveCursorX(int x) {
+		posX = x;
+		
+		Util.moveCursor(posY, posX);
+	}
+	
+	public static void moveCursorY(int y) {
+		posX = y;
+		
+		Util.moveCursor(posY, posX);
+	}
+	
+	private static void cleanRow() {
+		Util.moveCursorToColumn(0);
+		for (int i = 0; i < col; i++) {
+			System.out.print(" ");
+		}
+		Util.moveCursorToColumn(0);
+	}
+
+	public static void cleanTextArea() {
+		int currentX = posX;
+		int currentY = posY;
+		
+		Util.moveCursor(1, 1);
+		for (int i = 0; i < row-statusHeight+1; i++) {
+			cleanRow();
+			Util.moveCursor(i+1, 0);
+		}
+		
+		Util.moveCursor(currentY, currentX); // Restore original cursor position
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");
