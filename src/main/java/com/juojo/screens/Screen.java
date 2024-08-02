@@ -136,18 +136,14 @@ public abstract class Screen {
 				} else {
 					cleanRow();
 					exPosX = 1;
-					
-					try {
-						// Remove all unnecessary : from the start of charCodeList
-						while (charCodeList.getFirst() == 58) {
-							charCodeList.removeFirst();
-						}
-						
-						userInput = charCodeListToString(charCodeList);
-						new CreateCommandInstance(userInput);
-					} catch (Exception e) {
-						Alerts.COMMAND_NOT_FOUND.newAlert();
+
+					// Remove all unnecessary : from the start of charCodeList
+					while (charCodeList.getFirst() == 58) {
+						charCodeList.removeFirst();
 					}
+					
+					userInput = charCodeListToString(charCodeList);
+					new CreateCommandInstance(userInput);
 					
 					changeMode(Mode.NORMAL_MODE);
 					charCodeList.clear();
