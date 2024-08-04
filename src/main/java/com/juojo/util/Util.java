@@ -26,15 +26,20 @@ public abstract class Util {
 		System.out.printf("\033[%dG", position);
 		
 	}
+
+	public static void deleteEndOfRow() {
+		System.out.print("\033[K");
+		
+	}
 	
-//	public static void saveCursorPosition() {
-//		// Save cursor position in DEC and SCO
-//		System.out.print("\033 7\033[s");		
-//	}
+	public static void saveCursorPosition() {
+		// Save cursor position in DEC and SCO
+		System.out.print("\033 7\033[s");		
+	}
 	
-//	public static void restoreCursorPosition() {
-//		// Restore original cursor position in DEC and SCO
-//		System.out.print("\033 8\033[u");
-//	}
+	public static void restoreCursorPosition() {
+		// Restore original cursor position in DEC and SCO
+		System.out.print("\033 8\033[u");
+	}
 	
 }

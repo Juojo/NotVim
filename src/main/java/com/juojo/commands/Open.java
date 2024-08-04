@@ -1,8 +1,11 @@
 package com.juojo.commands;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
 
 import com.juojo.screens.Screen;
 import com.juojo.util.Alerts;
@@ -14,44 +17,54 @@ public class Open extends Command {
 	private static final String name = "Open";
 	private static final String desc = "Open test file.";
 	
-	private String path;
+	private String[] args;
+	private Path path;
 	
-	protected Open() {
+	protected Open(String[] args) {
 		super(name, desc);
+		this.args = args;
+		
+		executeCommand();
 	}
 
 	@Override
 	protected void executeCommand() {
-		path = "./testFile";
-		String data = "";
+		List<String> data = List.of();
+	
+		if (args[0] == null) {
+			path = Path.of("testFile");
+		} else {
+			path = Path.of(args[0]);
+		}
 		
 		if (Screen.canHandleFiles()) { // Verify that the screen is capable of handling files.
 			try {
 				Screen.moveCursor(1, 1);
-				Screen.cleanTextArea();
 				
-				File file = new File(path);
-				Scanner fileReader = new Scanner(file);
+				Stream<String> stream = Files.lines(path);
+				data = stream.toList();
 				
 				for (int i = 0; i < Screen.getRow()-Screen.getStatusHeight(); i++) {
-					System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+					if (i >= data.size()) {
+						System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+					} else {
+						System.out.print(data.get(i));
+					}
+					Util.deleteEndOfRow();
+					System.out.print("\r\n");
+					
 				}
 				
 				Screen.moveCursor(1, 1);
 				
-				while (fileReader.hasNextLine()) {
-					data = fileReader.nextLine();
-					System.out.print(data + "\n\r");
-				}
-				
-				fileReader.close();
 			} catch (FileNotFoundException e) {
 				Alerts.FILE_NOT_FOUND.newAlert();
+			} catch (NoSuchFileException e) {
+				Alerts.FILE_NOT_FOUND.newAlert();
 			} catch (Exception e) {
-				Alerts.newCustomAlert("Exception not handled", e.toString(), Colors.RED, null);
+				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 				//e.printStackTrace();
 			}
-			
 		} else {
 			Alerts.CANT_OPEN_FILE.newAlert();
 		}
