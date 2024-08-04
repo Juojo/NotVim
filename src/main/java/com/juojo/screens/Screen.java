@@ -138,7 +138,7 @@ public abstract class Screen {
 					exPosX = 1;
 
 					// Remove all unnecessary : from the start of charCodeList
-					while (charCodeList.getFirst() == 58) {
+					while (!charCodeList.isEmpty() && charCodeList.getFirst() == 58) {
 						charCodeList.removeFirst();
 					}
 					
