@@ -1,9 +1,12 @@
 package com.juojo.util;
 
+import com.juojo.screens.Screen;
+
 public enum Alerts {
 
 	COMMAND_NOT_FOUND("Command not found", null, Colors.RED, Colors.MAGENTA),
-	FILE_NOT_FOUND("Can't open file", "The file was not found", Colors.RED, null),
+	FILE_NOT_FOUND("Can't open file", "The file was not found, this may be caused if you don't have the right permissions.", Colors.RED, null),
+	NO_SUCH_FILE("Can't open file", "The file does not exists.", Colors.RED, null),
 	CANT_OPEN_FILE("Can't open file", "The active screen isn't capable of handling files.", Colors.RED, null);
 	
 	private String name, desc;
@@ -18,11 +21,21 @@ public enum Alerts {
 	}
 	
 	public void newAlert() {
+		Util.saveCursorPosition();
+		Util.moveCursor(Screen.getRow(), 0);
+		
 		printAlert(this.name, this.desc, this.fg, this.bg);
+		
+		Util.restoreCursorPosition();
 	}
 	
 	public static void newCustomAlert(String name, String desc, Colors fg, Colors bg) {
+		Util.saveCursorPosition();
+		Util.moveCursor(Screen.getRow(), 0);
+		
 		printAlert(name, desc, fg, bg);
+		
+		Util.restoreCursorPosition();
 	}
 	
 	private static void printAlert(String name, String desc, Colors fg, Colors bg) {
@@ -35,7 +48,7 @@ public enum Alerts {
 			if (desc == null || desc == "") {
 				text = name;
 			} else {
-				text = name + ". " + desc;
+				text = name + ": " + desc;
 			}
 			
 		}
