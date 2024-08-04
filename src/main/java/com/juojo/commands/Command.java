@@ -9,8 +9,6 @@ public abstract class Command {
 	protected Command(String name, String desc) {
 		this.name = name;
 		this.desc = desc;
-		
-		executeCommand();
 	}
 
 	protected abstract void executeCommand();

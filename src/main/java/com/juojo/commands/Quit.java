@@ -10,6 +10,8 @@ public class Quit extends Command {
 	
 	protected Quit() {
 		super(name, desc);
+		
+		executeCommand();
 	}
 	
 	@Override
