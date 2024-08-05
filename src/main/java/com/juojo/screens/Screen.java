@@ -175,7 +175,7 @@ public abstract class Screen {
 		return output;
 	}
 
-	private void changeMode(Mode mode) {
+	protected void changeMode(Mode mode) {
 		int currentX = posX;
 		int currentY = posY;
 		int currentExPosX = exPosX;

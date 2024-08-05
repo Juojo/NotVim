@@ -2,6 +2,7 @@ package com.juojo.screens;
 
 import java.io.IOException;
 
+import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
@@ -10,12 +11,17 @@ public class TextViewer extends Screen {
 	
 	private static boolean canHandleFiles = true;
 	
-	public TextViewer(int row, int col) {
+	public TextViewer(int row, int col, String[] args) {
 		super(row, col, canHandleFiles);
 		Util.clearScreen();
 	
-		printHomeScreen();
+		printHomeScreen();		
 		super.printStatusBar(false, super.posX, super.posY, super.exPosX);
+		
+		if (args.length != 0) {
+			super.changeMode(Mode.NORMAL_MODE);
+			new CreateCommandInstance("open " + args[0]);
+		}
 		
 		Util.moveCursorHome();
 		

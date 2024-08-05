@@ -25,7 +25,7 @@ public class Main {
     	setRowsAndColumns();
     	
     	//inputViewer = new InputViewer(40, 30);
-    	textViewer = new TextViewer(rows, columns);
+    	textViewer = new TextViewer(rows, columns, args);
     	
     	C.disableRawMode();
     	Util.clearScreen();
