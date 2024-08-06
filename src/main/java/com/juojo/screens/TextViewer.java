@@ -11,6 +11,7 @@ import com.juojo.util.Util;
 public class TextViewer extends Screen {
 	
 	private static boolean canHandleFiles = true;
+	private Data data = new Data();
 	
 	public TextViewer(int row, int col, String[] args) {
 		super(row, col, canHandleFiles);
@@ -35,6 +36,7 @@ public class TextViewer extends Screen {
 			}
 			
 			printChar();
+			data.insert((char) super.charCode);
 		}
 	}
 
