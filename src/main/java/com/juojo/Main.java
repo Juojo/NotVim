@@ -4,7 +4,7 @@ import com.juojo.jna.Ioctl;
 import com.juojo.jna.UseC;
 import com.juojo.screens.Screen;
 import com.juojo.screens.TextViewer;
-import com.juojo.util.Util;
+import com.juojo.util.ANSI;
 
 public class Main {
 	
@@ -28,8 +28,8 @@ public class Main {
     	textViewer = new TextViewer(rows, columns, args);
     	
     	C.disableRawMode();
-    	Util.clearScreen();
-    	Util.moveCursorHome();
+    	ANSI.clearScreen();
+    	ANSI.moveCursorHome();
     }
 
 	public static void setRowsAndColumns() {

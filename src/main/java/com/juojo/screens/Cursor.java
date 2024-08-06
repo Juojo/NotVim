@@ -16,21 +16,21 @@ public class Cursor {
 	public Cursor(Screen screen) {
 		this.screen = screen;
 		mode = screen.getCurrentMode();
-		terminalRow = screen.getRow();
-		terminalCol = screen.getCol();
+		terminalRow = screen.getTerminalRow();
+		terminalCol = screen.getTerminalCol();
 	}
 	
 	public void handleMovementKeys(int charCode) {
 		
 		if (mode != Mode.EX_MODE) {
 			if      (charCode == VK.ARROW_UP.getCode()    && row > 1)   row--;
-			else if (charCode == VK.ARROW_DOWN.getCode()  && row < row) row++;
-			else if (charCode == VK.ARROW_RIGHT.getCode() && col < col) col++;
+			else if (charCode == VK.ARROW_DOWN.getCode()  && row < terminalRow) row++;
+			else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) col++;
 			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1)   col--;
 			
 			ANSI.moveCursor(row, col); // row, col
 		} else {
-			if      (charCode == VK.ARROW_RIGHT.getCode() && col < col) exCol++;
+			if      (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) exCol++;
 			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1)   exCol--;
 			
 			ANSI.moveCursorToColumn(exCol);
@@ -40,9 +40,9 @@ public class Cursor {
 	
 	// Move and set cursor
 	
-	public void moveSet(int x, int y) {
-		this.col = x;
-		this.row = y;
+	public void moveSet(int col, int row) {
+		this.col = col;
+		this.row = row;
 		
 		ANSI.moveCursor(this.row, this.col);
 	}
@@ -89,12 +89,16 @@ public class Cursor {
 	
 	// Get row and col
 	
-	public int[] getRowCol() {
-		int[] output = new int[2];
-		output[0] = row;
-		output[1] = col;
-		
-		return output;
+	public int getCol() {
+		return col;
+	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getExCol() {
+		return exCol;
 	}
 	
 	// Update screen attributes
@@ -107,7 +111,7 @@ public class Cursor {
 		terminalRow = newTerminalRow;
 	}
 	
-	public void updateCol(int newTerminalCol) {
+	public void updateTerminalCol(int newTerminalCol) {
 		terminalCol = newTerminalCol;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.juojo.screens.Screen;
+import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
@@ -39,23 +40,25 @@ public class Open extends Command {
 		
 		if (Screen.canHandleFiles()) { // Verify that the screen is capable of handling files.
 			try {
-				Screen.moveCursor(1, 1);
+				//Screen.moveCursor(1, 1);
+				Screen.cursor.moveSet(1, 1);
 				
 				Stream<String> stream = Files.lines(path);
 				data = stream.toList();
 				
-				for (int i = 0; i < Screen.getRow()-Screen.getStatusHeight(); i++) {
+				for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
 					if (i >= data.size()) {
 						System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
 					} else {
 						System.out.print(data.get(i));
 					}
-					Util.deleteEndOfRow();
+					ANSI.deleteEndOfRow();
 					System.out.print("\r\n");
 					
 				}
 				
-				Screen.moveCursor(1, 1);
+				//Screen.moveCursor(1, 1);
+				Screen.cursor.moveSet(1, 1);
 				
 			} catch (FileNotFoundException e) {
 				Alerts.FILE_NOT_FOUND.newAlert();

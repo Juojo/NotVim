@@ -2,6 +2,7 @@ package com.juojo.screens;
 
 import java.io.IOException;
 
+import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
@@ -13,8 +14,8 @@ public class InputViewer extends Screen {
 	public InputViewer(int row, int col) {
 		super(row, col, canHandleFiles);
 		
-		Util.clearScreen();
-		Util.moveCursorHome();
+		ANSI.clearScreen();
+		ANSI.moveCursorHome();
 		
         while (super.getLoop()) {
 			try {

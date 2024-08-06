@@ -2,10 +2,10 @@ package com.juojo.screens;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.juojo.commands.CreateCommandInstance;
+import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
@@ -14,10 +14,12 @@ import com.juojo.virtualkeymapping.VK;
 public abstract class Screen {
 
 	
-	private static int row, col;
+	private static int terminalRow, terminalCol;
 	private static int statusHeight = 2;
 	private static boolean loop = false;
 	private static boolean canHandleFiles = false;
+	
+	public static Cursor cursor;
 	
 	protected int charCode;
 	
@@ -26,16 +28,20 @@ public abstract class Screen {
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
-	protected static int posX = 1;
-	protected static int posY = 1;
-	protected int exPosX = 1; // For EX_MODE cursor position
+//	protected static int posX = 1;
+//	protected static int posY = 1;
+//	protected int exPosX = 1; // For EX_MODE cursor position
 	
 	public Screen(int row, int col, boolean canHandleFiles) {
-		mode = Mode.INSERT_MODE;
-		this.loop = true;
 		resizeScreen(row, col);
+		this.loop = true;
 		this.canHandleFiles = canHandleFiles;
-		Util.moveCursor(posX, posY); // Move cursor to initial position (0; 0)
+		mode = Mode.INSERT_MODE;
+		
+		cursor = new Cursor(this);
+		cursor.moveSet(1, 1);
+		
+		//Util.moveCursor(posX, posY); // Move cursor to initial position (0; 0)
 	}
 	
 	protected void handleKey() throws IOException {
@@ -74,26 +80,26 @@ public abstract class Screen {
 		}
 		
 		handleCustomBinds(mode, charCode);
-		handleMovementKeys(charCode);
+		cursor.handleMovementKeys(charCode);
 	}
 	
-	private void handleMovementKeys(int charCode) {
-		
-		if (mode != Mode.EX_MODE) {
-			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
-			else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
-			else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
-			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
-			
-			Util.moveCursor(posY, posX); // row, col
-		} else {
-			if      (charCode == VK.ARROW_RIGHT.getCode() && posX < col) exPosX++;
-			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   exPosX--;
-			
-			Util.moveCursorToColumn(exPosX);
-		}
-		
-	}
+//	private void handleMovementKeys(int charCode) {
+//		
+//		if (mode != Mode.EX_MODE) {
+//			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
+//			else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
+//			else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
+//			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
+//			
+//			Util.moveCursor(posY, posX); // row, col
+//		} else {
+//			if      (charCode == VK.ARROW_RIGHT.getCode() && posX < col) exPosX++;
+//			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   exPosX--;
+//			
+//			Util.moveCursorToColumn(exPosX);
+//		}
+//		
+//	}
 
 	private void handleCustomBinds(Mode actualMode, int charCode) {
 		// Handle custom binds for all modes
@@ -122,8 +128,10 @@ public abstract class Screen {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
 				System.out.print("\n");
-				posY++;
-				posX=0;
+//				posY++;
+//				posX=0;				
+				cursor.incrementRow(1);
+				cursor.setCol(0);
 			}
 			
 			break;
@@ -135,7 +143,8 @@ public abstract class Screen {
 					charCodeList.add(charCode);
 				} else {
 					cleanRow();
-					exPosX = 1;
+					//exPosX = 1;
+					cursor.setExCol(1);
 
 					// Remove all unnecessary : from the start of charCodeList
 					while (!charCodeList.isEmpty() && charCodeList.getFirst() == 58) {
@@ -176,24 +185,27 @@ public abstract class Screen {
 	}
 
 	protected void changeMode(Mode mode) {
-		int currentX = posX;
-		int currentY = posY;
-		int currentExPosX = exPosX;
+		int currentCol = cursor.getCol();
+		int currentRow = cursor.getRow();
+		int currentExCol = cursor.getExCol();
 		
 		if (this.mode != mode) {
 			this.mode = mode;
+			cursor.updateMode(mode);
 			
 			if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
 				Alerts.setActiveAlertFalse();
-				printStatusBar(false, currentX, currentY, currentExPosX);
+				printStatusBar(false, currentCol, currentRow, currentExCol);
 			} else {
-				printStatusBar(true, currentX, currentY, currentExPosX);
+				printStatusBar(true, currentCol, currentRow, currentExCol);
 			}
 				
 			if (mode == Mode.EX_MODE) {
-				Util.moveCursor(row, 0);
+				//Util.moveCursor(row, 0);
+				ANSI.moveCursor(terminalRow, 0);
 			} else {
-				Util.moveCursor(currentY, currentX);
+				//Util.moveCursor(currentRow, currentCol);
+				cursor.moveSet(currentCol, currentRow);
 				
 				// Make sure incomplete commands are cleaned
 				charCodeList.clear();
@@ -205,13 +217,13 @@ public abstract class Screen {
 	}
 	
 	protected void printStatusBar(boolean modeOnTitle, int currentX, int currentY, int currentExPosX) {
-		Util.moveCursor(row+1-statusHeight, 0); // Move cursor to status-bar position
+		ANSI.moveCursor(terminalRow+1-statusHeight, 0); // Move cursor to status-bar position
 
 		// Print status-bar
-		for (int i = 0; i < col; i++) {
+		for (int i = 0; i < terminalCol; i++) {
 			System.out.print(Util.returnColorString(" ", Colors.DEFAULT, Colors.RED));
 		}
-		Util.moveCursorToColumn(0);
+		ANSI.moveCursorToColumn(0);
 
 		System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE, Colors.RED));
 		
@@ -226,13 +238,13 @@ public abstract class Screen {
 		
 		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		
-		if (mode != Mode.EX_MODE) Util.moveCursor(currentY, currentX);
-		else Util.moveCursorToColumn(currentExPosX);
+		if (mode != Mode.EX_MODE) ANSI.moveCursor(currentY, currentX);
+		else ANSI.moveCursorToColumn(currentExPosX);
 	}
 	
 	private void resizeScreen(int row, int col) {
-		this.row = row;
-		this.col = col;
+		this.terminalRow = row;
+		this.terminalCol = col;
 	}
 
 	protected boolean getLoop() {
@@ -247,52 +259,60 @@ public abstract class Screen {
 		loop = false;
 	}
 	
-	public static int getRow() {
-		return row;
+	public static int getTerminalRow() {
+		return terminalRow;
+	}
+	
+	public int getTerminalCol() {
+		return terminalCol;
 	}
 	
 	public static boolean canHandleFiles() {
 		return canHandleFiles;
 	}
 	
-	public static void moveCursor(int x, int y) {
-		posX = x;
-		posY = y;
-		
-		Util.moveCursor(posY, posX);
-	}
-	
-	public static void moveCursorX(int x) {
-		posX = x;
-		
-		Util.moveCursor(posY, posX);
-	}
-	
-	public static void moveCursorY(int y) {
-		posX = y;
-		
-		Util.moveCursor(posY, posX);
-	}
+//	public static void moveCursor(int x, int y) {
+//		posX = x;
+//		posY = y;
+//		
+//		Util.moveCursor(posY, posX);
+//	}
+//	
+//	public static void moveCursorX(int x) {
+//		posX = x;
+//		
+//		Util.moveCursor(posY, posX);
+//	}
+//	
+//	public static void moveCursorY(int y) {
+//		posX = y;
+//		
+//		Util.moveCursor(posY, posX);
+//	}
 	
 	private static void cleanRow() {
-		Util.moveCursorToColumn(0);
-		for (int i = 0; i < col; i++) {
+		ANSI.moveCursorToColumn(0);
+		for (int i = 0; i < terminalCol; i++) {
 			System.out.print(" ");
 		}
-		Util.moveCursorToColumn(0);
+		ANSI.moveCursorToColumn(0);
 	}
 
 	public static void cleanTextArea() {
-		int currentX = posX;
-		int currentY = posY;
+		int currentCol = cursor.getCol();
+		int currentRow = cursor.getRow();
 		
-		Util.moveCursor(1, 1);
-		for (int i = 0; i < row-statusHeight+1; i++) {
+		ANSI.moveCursor(1, 1);
+		for (int i = 0; i < terminalRow-statusHeight+1; i++) {
 			cleanRow();
-			Util.moveCursor(i+1, 0);
+			ANSI.moveCursor(i+1, 0);
 		}
 		
-		Util.moveCursor(currentY, currentX); // Restore original cursor position
+		ANSI.moveCursor(currentRow, currentCol); // Restore original cursor position
+	}
+
+	public Mode getCurrentMode() {
+		return mode;
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");
