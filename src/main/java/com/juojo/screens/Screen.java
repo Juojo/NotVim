@@ -28,10 +28,6 @@ public abstract class Screen {
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
-//	protected static int posX = 1;
-//	protected static int posY = 1;
-//	protected int exPosX = 1; // For EX_MODE cursor position
-	
 	public Screen(int row, int col, boolean canHandleFiles) {
 		resizeScreen(row, col);
 		this.loop = true;
@@ -40,8 +36,6 @@ public abstract class Screen {
 		
 		cursor = new Cursor(this);
 		cursor.moveSet(1, 1);
-		
-		//Util.moveCursor(posX, posY); // Move cursor to initial position (0; 0)
 	}
 	
 	protected void handleKey() throws IOException {
@@ -82,24 +76,6 @@ public abstract class Screen {
 		handleCustomBinds(mode, charCode);
 		cursor.handleMovementKeys(charCode);
 	}
-	
-//	private void handleMovementKeys(int charCode) {
-//		
-//		if (mode != Mode.EX_MODE) {
-//			if      (charCode == VK.ARROW_UP.getCode()    && posY > 1)   posY--;
-//			else if (charCode == VK.ARROW_DOWN.getCode()  && posY < row) posY++;
-//			else if (charCode == VK.ARROW_RIGHT.getCode() && posX < col) posX++;
-//			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   posX--;
-//			
-//			Util.moveCursor(posY, posX); // row, col
-//		} else {
-//			if      (charCode == VK.ARROW_RIGHT.getCode() && posX < col) exPosX++;
-//			else if (charCode == VK.ARROW_LEFT.getCode()  && posX > 1)   exPosX--;
-//			
-//			Util.moveCursorToColumn(exPosX);
-//		}
-//		
-//	}
 
 	private void handleCustomBinds(Mode actualMode, int charCode) {
 		// Handle custom binds for all modes
@@ -127,9 +103,7 @@ public abstract class Screen {
 		case INSERT_MODE: {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
-				System.out.print("\n");
-//				posY++;
-//				posX=0;				
+				System.out.print("\n");			
 				cursor.incrementRow(1);
 				cursor.setCol(0);
 			}
@@ -143,7 +117,6 @@ public abstract class Screen {
 					charCodeList.add(charCode);
 				} else {
 					cleanRow();
-					//exPosX = 1;
 					cursor.setExCol(1);
 
 					// Remove all unnecessary : from the start of charCodeList
@@ -201,10 +174,8 @@ public abstract class Screen {
 			}
 				
 			if (mode == Mode.EX_MODE) {
-				//Util.moveCursor(row, 0);
 				ANSI.moveCursor(terminalRow, 0);
 			} else {
-				//Util.moveCursor(currentRow, currentCol);
 				cursor.moveSet(currentCol, currentRow);
 				
 				// Make sure incomplete commands are cleaned
@@ -270,25 +241,6 @@ public abstract class Screen {
 	public static boolean canHandleFiles() {
 		return canHandleFiles;
 	}
-	
-//	public static void moveCursor(int x, int y) {
-//		posX = x;
-//		posY = y;
-//		
-//		Util.moveCursor(posY, posX);
-//	}
-//	
-//	public static void moveCursorX(int x) {
-//		posX = x;
-//		
-//		Util.moveCursor(posY, posX);
-//	}
-//	
-//	public static void moveCursorY(int y) {
-//		posX = y;
-//		
-//		Util.moveCursor(posY, posX);
-//	}
 	
 	private static void cleanRow() {
 		ANSI.moveCursorToColumn(0);

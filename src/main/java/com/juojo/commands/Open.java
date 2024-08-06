@@ -40,7 +40,6 @@ public class Open extends Command {
 		
 		if (Screen.canHandleFiles()) { // Verify that the screen is capable of handling files.
 			try {
-				//Screen.moveCursor(1, 1);
 				Screen.cursor.moveSet(1, 1);
 				
 				Stream<String> stream = Files.lines(path);
@@ -57,7 +56,6 @@ public class Open extends Command {
 					
 				}
 				
-				//Screen.moveCursor(1, 1);
 				Screen.cursor.moveSet(1, 1);
 				
 			} catch (FileNotFoundException e) {
