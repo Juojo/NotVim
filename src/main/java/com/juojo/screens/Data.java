@@ -4,7 +4,9 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.juojo.util.ANSI;
@@ -30,7 +32,8 @@ public class Data {
 		if (Screen.canHandleFiles()) { 
 			try {
 				stream = Files.lines(this.path);
-				data = stream.toList();
+				//data = stream.toList();
+				data = stream.collect(Collectors.toCollection(ArrayList::new));
 				
 				Screen.cursor.moveSet(1, 1);
 				
@@ -56,8 +59,20 @@ public class Data {
 		}
 	}
 	
-	public void insert(char key) {
+	public void insert(char key, int row, int col) {
 		
+		/* 
+		 This is probably the worst possible approach. Every time the user enters a new key this method is called.
+		 Creating a completely new array for the line that is being edited just to add a new char. This result in
+		 tons of memory usage, which can be improved if a different data structure is implemented. See:
+		 https://www.averylaird.com/programming/the%20text%20editor/2017/09/30/the-piece-table
+		 for more info about data structures in text editors.
+		*/
+		
+		String currentLine = data.get(row);
+		String buffer = new StringBuilder(currentLine).insert(col, key).toString();
+		
+		data.set(row, buffer);
 	}
 	
 	public void writeNewFile(Path path) {

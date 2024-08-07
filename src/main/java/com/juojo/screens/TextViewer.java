@@ -1,6 +1,7 @@
 package com.juojo.screens;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.ANSI;
@@ -27,6 +28,9 @@ public class TextViewer extends Screen {
 		
 		ANSI.moveCursorHome();
 		
+		// delete this
+		data.print(Path.of("testFile"));
+		
         while (super.getLoop()) {
 			try {
 				super.handleKey();
@@ -36,7 +40,7 @@ public class TextViewer extends Screen {
 			}
 			
 			printChar();
-			data.insert((char) super.charCode);
+			data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
 		}
 	}
 
