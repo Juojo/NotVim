@@ -38,6 +38,10 @@ public class Cursor {
 		
 	}
 	
+	public void updatePosition() {
+		ANSI.moveCursor(this.row, this.col);
+	}
+	
 	// Move and set cursor
 	
 	public void moveSet(int col, int row) {

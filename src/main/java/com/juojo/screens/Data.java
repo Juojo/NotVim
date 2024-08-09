@@ -15,14 +15,11 @@ import com.juojo.util.Util;
 
 public class Data {
 
-	//private String fileName = "file";
-	
 	private List<String> data;
 	private Path path;
 
 	public Data() {
 		data = new ArrayList<>();
-		//data.add("123");
 	}
 	
 	public void readPrint(Path path) {
@@ -113,9 +110,11 @@ public class Data {
 		
 		ANSI.moveCursorToColumn(0);
 		System.out.print(data.get(line));
-		ANSI.deleteEndOfRow();
 		
 		ANSI.restoreCursorPosition();
+		
+		Screen.cursor.incrementCol(1);
+		Screen.cursor.updatePosition();
 	}
 	
 }
