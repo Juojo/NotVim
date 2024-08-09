@@ -28,9 +28,6 @@ public class TextViewer extends Screen {
 		
 		ANSI.moveCursorHome();
 		
-		// delete this
-		data.print(Path.of("testFile"));
-		
         while (super.getLoop()) {
 			try {
 				super.handleKey();
@@ -39,8 +36,14 @@ public class TextViewer extends Screen {
 				//e.printStackTrace();
 			}
 			
-			printChar();
-			data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
+			if (super.mode == Mode.INSERT_MODE) {
+				printChar();
+				data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
+			} else if (super.mode == Mode.EX_MODE) {
+				printChar();
+			}
+			
+			
 		}
 	}
 
@@ -51,7 +54,7 @@ public class TextViewer extends Screen {
 	}
 
 	private void printChar() {
-		if (super.charCode >= 0 && (super.mode == Mode.INSERT_MODE || super.mode == Mode.EX_MODE)) {
+		if (super.charCode >= 0) {
 			System.out.print((char) super.charCode);
 			if (super.mode == Mode.INSERT_MODE) cursor.incrementCol(1);
 			if (super.mode == Mode.EX_MODE) cursor.incrementExCol(1);

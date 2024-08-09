@@ -6,7 +6,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.juojo.util.ANSI;
@@ -18,34 +17,20 @@ public class Data {
 
 	//private String fileName = "file";
 	
-	private List<String> data = List.of();
+	private List<String> data;
 	private Path path;
-	private Stream<String> stream;
 
 	public Data() {
-
+		data = new ArrayList<>();
 	}
 	
-	public void print(Path path) {
+	public void readPrint(Path path) {
 		this.path = path;
 		
 		if (Screen.canHandleFiles()) { 
-			try {
-				stream = Files.lines(this.path);
-				//data = stream.toList();
-				data = stream.collect(Collectors.toCollection(ArrayList::new));
-				
-				Screen.cursor.moveSet(1, 1);
-				
-				for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
-					if (i >= data.size()) {
-						System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
-					} else {
-						System.out.print(data.get(i));
-					}
-					ANSI.deleteEndOfRow();
-					System.out.print("\r\n");
-				}
+			try (Stream<String> stream = Files.lines(this.path)) {
+				data = stream.toList();
+				printFile();
 			} catch (FileNotFoundException e) {
 				Alerts.FILE_NOT_FOUND.newAlert();
 			} catch (NoSuchFileException e) {
@@ -58,7 +43,7 @@ public class Data {
 			Alerts.CANT_OPEN_FILE.newAlert();
 		}
 	}
-	
+
 	public void insert(char key, int row, int col) {
 		
 		/* 
@@ -69,18 +54,64 @@ public class Data {
 		 for more info about data structures in text editors.
 		*/
 		
-		String currentLine = data.get(row);
-		String buffer = new StringBuilder(currentLine).insert(col, key).toString();
+		char[] currentLine;
 		
-		data.set(row, buffer);
+		if (!data.isEmpty()) currentLine = new char[1];
+		else currentLine = data.get(row).toCharArray();
+		
+		char[] buffer = new char[currentLine.length+1];
+		
+		for (int i = 0; i < buffer.length; i++) {
+			if (i < col-1) {
+				// The loop didn't reach the cursor position yet.
+				// Assign existing chars to the new arr (buffer).
+				buffer[i] = currentLine[i];
+			} else {
+				if (i == col-1) {
+					// The loop is at the cursor position.
+					// Add the new key to the buffer.
+					buffer[i] = key;
+				} else  {
+					// The loop is now after cursor position.
+					// Keep assigning existing chars to the buffer.
+					buffer[i+1] = currentLine[i]; 
+				}
+			}
+		}
+		
+		data.set(row-1, buffer.toString());
+		updateLine(row-1);
 	}
 	
-	public void writeNewFile(Path path) {
+	public void write(Path path) {
 		this.path = path;
 		
 	}
 	
-	public void writeExistingFile() {
+	
+	private void printFile() {
+		ANSI.moveCursorHome();
 		
+		for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
+			if (i >= data.size()) {
+				System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+			} else {
+				System.out.print(data.get(i));
+			}
+			ANSI.deleteEndOfRow();
+			System.out.print("\r\n");
+		}
+		
+		Screen.cursor.moveSet(1, 1);
 	}
+	
+	private void updateLine(int line) {
+		ANSI.saveCursorPosition();
+		
+		System.out.print(data.get(line));
+		ANSI.deleteEndOfRow();
+		
+		ANSI.restoreCursorPosition();
+	}
+	
 }

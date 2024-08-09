@@ -29,7 +29,7 @@ public class Open extends Command {
 		}
 		
 		Data data = new Data();
-		data.print(path);
+		data.readPrint(path);
 	}
 
 }
