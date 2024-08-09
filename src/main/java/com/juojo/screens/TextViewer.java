@@ -36,14 +36,16 @@ public class TextViewer extends Screen {
 				//e.printStackTrace();
 			}
 			
-			if (super.mode == Mode.INSERT_MODE) {
-				printChar();
-				data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
-			} else if (super.mode == Mode.EX_MODE) {
-				printChar();
+			if (super.charCode >= 0) {
+				if (super.mode == Mode.INSERT_MODE) {
+					//printChar();
+					data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
+					cursor.incrementCol(1);
+				} else if (super.mode == Mode.EX_MODE) {
+					printChar();
+					cursor.incrementExCol(1);
+				}
 			}
-			
-			
 		}
 	}
 
@@ -54,11 +56,7 @@ public class TextViewer extends Screen {
 	}
 
 	private void printChar() {
-		if (super.charCode >= 0) {
-			System.out.print((char) super.charCode);
-			if (super.mode == Mode.INSERT_MODE) cursor.incrementCol(1);
-			if (super.mode == Mode.EX_MODE) cursor.incrementExCol(1);
-		}
+		System.out.print((char) super.charCode);
 	}
 
 }

@@ -103,7 +103,7 @@ public abstract class Screen {
 		case INSERT_MODE: {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
-				System.out.print("\n");			
+				System.out.print("\n");
 				cursor.incrementRow(1);
 				cursor.setCol(0);
 			}

@@ -22,6 +22,7 @@ public class Data {
 
 	public Data() {
 		data = new ArrayList<>();
+		//data.add("123");
 	}
 	
 	public void readPrint(Path path) {
@@ -54,32 +55,34 @@ public class Data {
 		 for more info about data structures in text editors.
 		*/
 		
-		char[] currentLine;
-		
-		if (!data.isEmpty()) currentLine = new char[1];
-		else currentLine = data.get(row).toCharArray();
-		
-		char[] buffer = new char[currentLine.length+1];
-		
-		for (int i = 0; i < buffer.length; i++) {
-			if (i < col-1) {
-				// The loop didn't reach the cursor position yet.
-				// Assign existing chars to the new arr (buffer).
-				buffer[i] = currentLine[i];
-			} else {
-				if (i == col-1) {
+		try {
+			char[] currentLine = data.get(row-1).toCharArray();
+			char[] buffer = new char[currentLine.length+1];
+			
+			for (int i = 0; i < buffer.length; i++) {
+				if (i < col-1) {
+					// The loop didn't reach the cursor position yet.
+					// Assign existing chars to the new arr (buffer).
+					buffer[i] = currentLine[i];
+				} else if (i == col-1) {
 					// The loop is at the cursor position.
 					// Add the new key to the buffer.
 					buffer[i] = key;
-				} else  {
+				} else if (i > col-1)  {
 					// The loop is now after cursor position.
 					// Keep assigning existing chars to the buffer.
-					buffer[i+1] = currentLine[i]; 
+					buffer[i] = currentLine[i-1];
 				}
 			}
+			
+			data.set(row-1, new String(buffer));
+		} catch (Exception e) {
+			char[] buffer = new char[1];
+			buffer[0] = key;
+			
+			data.add(row-1, new String(buffer));
 		}
 		
-		data.set(row-1, buffer.toString());
 		updateLine(row-1);
 	}
 	
@@ -108,6 +111,7 @@ public class Data {
 	private void updateLine(int line) {
 		ANSI.saveCursorPosition();
 		
+		ANSI.moveCursorToColumn(0);
 		System.out.print(data.get(line));
 		ANSI.deleteEndOfRow();
 		
