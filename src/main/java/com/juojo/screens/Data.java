@@ -116,5 +116,29 @@ public class Data {
 		Screen.cursor.incrementCol(1);
 		Screen.cursor.updatePosition();
 	}
+
+	public int getRowLenght(int row) {
+		int lenght;
+		
+		if (data.isEmpty()) {
+			lenght = 0;
+		} else {
+			lenght = data.get(row-1).length();
+		}
+		
+		return lenght;
+	}
+
+	public int getAmountOfRows() {
+		int amount;
+		
+		if (data.isEmpty()) {
+			amount = 0;
+		} else {
+			amount = data.size();
+		}
+		
+		return amount;
+	}
 	
 }

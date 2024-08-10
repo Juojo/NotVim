@@ -38,7 +38,7 @@ public abstract class Screen {
 		cursor.moveSet(1, 1);
 	}
 	
-	protected void handleKey() throws IOException {
+	protected void handleKey(int rowLenght, int amountOfRows) throws IOException {
 		int secondChar = 0, thirdChar = 0;
 		charCode = System.in.read();
 		
@@ -74,7 +74,7 @@ public abstract class Screen {
 		}
 		
 		handleCustomBinds(mode, charCode);
-		cursor.handleMovementKeys(charCode);
+		cursor.handleMovementKeys(charCode, rowLenght, amountOfRows);
 	}
 
 	private void handleCustomBinds(Mode actualMode, int charCode) {

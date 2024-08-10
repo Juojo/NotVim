@@ -20,13 +20,13 @@ public class Cursor {
 		terminalCol = screen.getTerminalCol();
 	}
 	
-	public void handleMovementKeys(int charCode) {
+	public void handleMovementKeys(int charCode, int rowLenght, int amountOfRows) {
 		
 		if (mode != Mode.EX_MODE) {
-			if      (charCode == VK.ARROW_UP.getCode()    && row > 1)   row--;
-			else if (charCode == VK.ARROW_DOWN.getCode()  && row < terminalRow) row++;
-			else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) col++;
-			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1)   col--;
+			if      (charCode == VK.ARROW_UP.getCode()    && row > 1) row--;
+			else if (charCode == VK.ARROW_DOWN.getCode()  && row < terminalRow && row < amountOfRows) row++;
+			else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol && col <= rowLenght) col++;
+			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1) col--;
 			
 			ANSI.moveCursor(row, col); // row, col
 		} else {

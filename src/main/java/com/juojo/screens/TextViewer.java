@@ -30,7 +30,7 @@ public class TextViewer extends Screen {
 		
         while (super.getLoop()) {
 			try {
-				super.handleKey();
+				super.handleKey(data.getRowLenght(cursor.getRow()), data.getAmountOfRows());
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 				//e.printStackTrace();
