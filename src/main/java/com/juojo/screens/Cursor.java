@@ -23,15 +23,24 @@ public class Cursor {
 	public void handleMovementKeys(int charCode, int rowLenght, int amountOfRows) {
 		
 		if (mode != Mode.EX_MODE) {
-			if      (charCode == VK.ARROW_UP.getCode()    && row > 1) row--;
-			else if (charCode == VK.ARROW_DOWN.getCode()  && row < terminalRow && row < amountOfRows) row++;
-			else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol && col <= rowLenght) col++;
-			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1) col--;
+			if (charCode == VK.ARROW_UP.getCode() && row > 1) {
+				row--;
+			} else if (charCode == VK.ARROW_DOWN.getCode() && row < terminalRow) {
+				if (row < amountOfRows) row++;
+			} else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
+				if (row == 1 && col <= rowLenght) col++;
+				else if (row != 1 && col < rowLenght) col++;
+			} else if (charCode == VK.ARROW_LEFT.getCode() && col > 1) {
+				col--;
+			}
 			
 			ANSI.moveCursor(row, col); // row, col
 		} else {
-			if      (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) exCol++;
-			else if (charCode == VK.ARROW_LEFT.getCode()  && col > 1)   exCol--;
+			if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
+				exCol++;
+			} else if (charCode == VK.ARROW_LEFT.getCode() && col > 1) {
+				exCol--;
+			}
 			
 			ANSI.moveCursorToColumn(exCol);
 		}

@@ -35,7 +35,7 @@ public abstract class Screen {
 		mode = Mode.INSERT_MODE;
 		
 		cursor = new Cursor(this);
-		cursor.moveSet(1, 1);
+		ANSI.moveCursorHome();
 	}
 	
 	protected void handleKey(int rowLenght, int amountOfRows) throws IOException {
@@ -102,10 +102,8 @@ public abstract class Screen {
 		}
 		case INSERT_MODE: {
 			
-			if (charCode == 13 || charCode == 10) { // Enter
-				System.out.print("\n");
-				cursor.incrementRow(1);
-				cursor.setCol(0);
+			if (charCode == 13 || charCode == 10) { // Enter);
+				cursor.moveSet(0, cursor.getRow()+1);
 			}
 			
 			break;
