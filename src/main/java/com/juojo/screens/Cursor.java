@@ -22,26 +22,53 @@ public class Cursor {
 		terminalCol = screen.getTerminalCol();
 	}
 	
+	// ROW LENGHT == DATA.GET ROW LENGHT ??
 	public void handleMovementKeys(int charCode, int rowLenght, int amountOfRows) {
 		
 		if (mode != Mode.EX_MODE) {
 			if (charCode == VK.ARROW_UP.getCode() && row > 1) {
+				// ARROW UP
 				row--;
 				handleColMemory();
 			} else if (charCode == VK.ARROW_DOWN.getCode() && row < terminalRow) {
+				// ARROW DOWN
 				if (row < amountOfRows) {
 					row++;
 					handleColMemory();
 				}
 			} else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
-				if (row == 1 && col <= rowLenght) col++;
-				else if (row != 1 && col < rowLenght) col++;
+				// ARROW RIGHT
+				if (row == 1) {
+					if (col == Data.getRowLenght(row)+1 && amountOfRows > row) {
+						row++;
+						col = 1;
+					} else {
+						if (col <= rowLenght) col++;
+					}
+				} else {
+					if (col == Data.getRowLenght(row) && amountOfRows > row) {
+						row++;
+						col = 1;
+					} else {
+						if (col < rowLenght) col++;
+					}
+						
+				}
 				
-				maxCol = col; // reset maxCol if the column position is changed
-			} else if (charCode == VK.ARROW_LEFT.getCode() && col > 1) {
-				col--;
+				// reset maxCol if the column position is changed
+				maxCol = col;
+			} else if (charCode == VK.ARROW_LEFT.getCode()) {
+				// ARROW LEFT
+				if (col == 1 && row != 1) {
+					row--;
+					if (row == 1) col = Data.getRowLenght(row)+1;  // if it's the first line add one more unit
+					else col = Data.getRowLenght(row);
+				} else if (col > 1) { 
+					col--;
+				}
 				
-				maxCol = col; // reset maxCol if the column position is changed
+				// reset maxCol if the column position is changed
+				maxCol = col;
 			}
 			
 			ANSI.moveCursor(row, col); // row, col
