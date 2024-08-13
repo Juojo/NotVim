@@ -9,6 +9,8 @@ public class Cursor {
 	private int row = 1;
 	private int exCol = 1;
 	
+	private int maxCol = 1;
+	
 	private Screen screen;
 	private Mode mode;
 	private int terminalRow, terminalCol;
@@ -25,13 +27,21 @@ public class Cursor {
 		if (mode != Mode.EX_MODE) {
 			if (charCode == VK.ARROW_UP.getCode() && row > 1) {
 				row--;
+				handleColMemory();
 			} else if (charCode == VK.ARROW_DOWN.getCode() && row < terminalRow) {
-				if (row < amountOfRows) row++;
+				if (row < amountOfRows) {
+					row++;
+					handleColMemory();
+				}
 			} else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
 				if (row == 1 && col <= rowLenght) col++;
 				else if (row != 1 && col < rowLenght) col++;
+				
+				maxCol = col; // reset maxCol if the column position is changed
 			} else if (charCode == VK.ARROW_LEFT.getCode() && col > 1) {
 				col--;
+				
+				maxCol = col; // reset maxCol if the column position is changed
 			}
 			
 			ANSI.moveCursor(row, col); // row, col
@@ -47,6 +57,21 @@ public class Cursor {
 		
 	}
 	
+	private void handleColMemory() {		
+		// Assign maxCol
+		if (col > maxCol) {
+			maxCol = col;
+		}
+		
+		// Move cursor to maxCol
+		if (maxCol > Data.getRowLenght(row)) {			
+			if (row == 1) col = Data.getRowLenght(row)+1;  // if it's the first line add one more unit
+			else col = Data.getRowLenght(row); 
+		} else {
+			col = maxCol; 
+		}
+	}
+
 	public void updatePosition() {
 		ANSI.moveCursor(this.row, this.col);
 	}

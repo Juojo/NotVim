@@ -15,7 +15,7 @@ import com.juojo.util.Util;
 
 public class Data {
 
-	private List<String> data;
+	private static List<String> data;
 	private Path path;
 
 	public Data() {
@@ -117,7 +117,7 @@ public class Data {
 		Screen.cursor.updatePosition();
 	}
 
-	public int getRowLenght(int row) {
+	public static int getRowLenght(int row) {
 		int lenght;
 		
 		if (data.isEmpty()) {
