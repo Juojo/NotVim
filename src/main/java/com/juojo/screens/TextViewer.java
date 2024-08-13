@@ -12,7 +12,6 @@ import com.juojo.util.Util;
 public class TextViewer extends Screen {
 	
 	private static boolean canHandleFiles = true;
-	private Data data = new Data();
 	
 	public TextViewer(int row, int col, String[] args) {
 		super(row, col, canHandleFiles);
@@ -23,14 +22,14 @@ public class TextViewer extends Screen {
 		
 		if (args.length != 0) {
 			super.changeMode(Mode.NORMAL_MODE);
-			new CreateCommandInstance("open " + args[0]);
+			new CreateCommandInstance("open " + args[0], this);
 		}
 		
 		ANSI.moveCursorHome();
 		
         while (super.getLoop()) {
 			try {
-				super.handleKey(data.getRowLenght(cursor.getRow()), data.getAmountOfRows());
+				super.handleKey();
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 				//e.printStackTrace();
@@ -38,7 +37,7 @@ public class TextViewer extends Screen {
 			
 			if (super.charCode >= 0) {
 				if (super.mode == Mode.INSERT_MODE) {
-					data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
+					super.data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
 				} else if (super.mode == Mode.EX_MODE) {
 					printChar();
 					cursor.incrementExCol(1);

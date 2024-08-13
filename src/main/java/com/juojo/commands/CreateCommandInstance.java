@@ -1,5 +1,6 @@
 package com.juojo.commands;
 
+import com.juojo.screens.Screen;
 import com.juojo.util.Alerts;
 
 public class CreateCommandInstance {
@@ -9,7 +10,7 @@ public class CreateCommandInstance {
 	private String[] args = new String[maxArgs];
 	private String[] inputArray;
 	
-	public CreateCommandInstance(String input) {
+	public CreateCommandInstance(String input, Screen executedFromScreen) {
 		initArray(args);
 		inputArray = null;
 		
@@ -29,7 +30,7 @@ public class CreateCommandInstance {
 			}
 			
 			if (command.equals("q") || command.equals("quit")) new Quit();
-			else if (command.equals("open")) new Open(args);
+			else if (command.equals("open")) new Open(args, executedFromScreen);
 			//else if (command.equals("w") || command.equals("write")) new Write();
 			else Alerts.COMMAND_NOT_FOUND.newAlert();
 		}

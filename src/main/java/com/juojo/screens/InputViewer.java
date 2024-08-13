@@ -19,7 +19,7 @@ public class InputViewer extends Screen {
 		
         while (super.getLoop()) {
 			try {
-				super.handleKey(0, 0);
+				super.handleKey();
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 				//e.printStackTrace();

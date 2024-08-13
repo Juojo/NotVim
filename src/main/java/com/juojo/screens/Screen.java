@@ -1,10 +1,12 @@
 package com.juojo.screens;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.juojo.commands.CreateCommandInstance;
+import com.juojo.screens.cursor.Cursor;
 import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
@@ -20,6 +22,7 @@ public abstract class Screen {
 	private static boolean canHandleFiles = false;
 	
 	public static Cursor cursor;
+	protected Data data;
 	
 	protected int charCode;
 	
@@ -28,17 +31,19 @@ public abstract class Screen {
 	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
 	private String userInput = "";
 	
-	public Screen(int row, int col, boolean canHandleFiles) {
+	protected Screen(int row, int col, boolean canHandleFiles) {
 		resizeScreen(row, col);
 		this.loop = true;
 		this.canHandleFiles = canHandleFiles;
 		mode = Mode.INSERT_MODE;
 		
+		if (canHandleFiles) data = new Data();
+		
 		cursor = new Cursor(this);
 		ANSI.moveCursorHome();
 	}
 	
-	protected void handleKey(int rowLenght, int amountOfRows) throws IOException {
+	protected void handleKey() throws IOException {
 		int secondChar = 0, thirdChar = 0;
 		charCode = System.in.read();
 		
@@ -74,7 +79,7 @@ public abstract class Screen {
 		}
 		
 		handleCustomBinds(mode, charCode);
-		cursor.handleMovementKeys(charCode, rowLenght, amountOfRows);
+		if (canHandleFiles) cursor.handleMovementKeys(charCode, data);
 	}
 
 	private void handleCustomBinds(Mode actualMode, int charCode) {
@@ -123,7 +128,7 @@ public abstract class Screen {
 					}
 					
 					userInput = charCodeListToString(charCodeList);
-					new CreateCommandInstance(userInput);
+					new CreateCommandInstance(userInput, this);
 					
 					changeMode(Mode.NORMAL_MODE);
 					charCodeList.clear();
@@ -263,6 +268,11 @@ public abstract class Screen {
 
 	public Mode getCurrentMode() {
 		return mode;
+	}
+
+	public void readPrintData(Path path) {
+		data = new Data();
+		data.readPrint(path);
 	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");

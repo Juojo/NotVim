@@ -15,14 +15,14 @@ import com.juojo.util.Util;
 
 public class Data {
 
-	private static List<String> data;
+	private List<String> data;
 	private Path path;
 
-	public Data() {
+	protected Data() {
 		data = new ArrayList<>();
 	}
 	
-	public void readPrint(Path path) {
+	protected void readPrint(Path path) {
 		this.path = path;
 		
 		if (Screen.canHandleFiles()) { 
@@ -42,7 +42,7 @@ public class Data {
 		}
 	}
 
-	public void insert(char key, int row, int col) {
+	protected void insert(char key, int row, int col) {
 		
 		/* 
 		 This is probably the worst possible approach. Every time the user enters a new key this method is called.
@@ -83,7 +83,7 @@ public class Data {
 		updateLine(row-1);
 	}
 	
-	public void write(Path path) {
+	protected void write(Path path) {
 		this.path = path;
 		
 	}
@@ -117,7 +117,7 @@ public class Data {
 		Screen.cursor.updatePosition();
 	}
 
-	public static int getRowLenght(int row) {
+	public int getRowLenght(int row) {
 		int lenght;
 		
 		if (data.isEmpty()) {

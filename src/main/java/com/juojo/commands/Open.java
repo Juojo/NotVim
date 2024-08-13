@@ -3,6 +3,7 @@ package com.juojo.commands;
 import java.nio.file.Path;
 
 import com.juojo.screens.Data;
+import com.juojo.screens.Screen;
 
 public class Open extends Command {
 
@@ -10,10 +11,12 @@ public class Open extends Command {
 	private static final String desc = "Open test file.";
 	
 	private String[] args;
+	private Screen executedFromScreen;
 	
-	protected Open(String[] args) {
+	protected Open(String[] args, Screen executedFromScreen) {
 		super(name, desc);
 		this.args = args;
+		this.executedFromScreen = executedFromScreen;
 		
 		executeCommand();
 	}
@@ -28,8 +31,7 @@ public class Open extends Command {
 			path = Path.of(args[0]);
 		}
 		
-		Data data = new Data();
-		data.readPrint(path);
+		executedFromScreen.readPrintData(path);
 	}
 
 }

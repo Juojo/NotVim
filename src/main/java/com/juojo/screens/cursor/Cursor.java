@@ -1,5 +1,8 @@
-package com.juojo.screens;
+package com.juojo.screens.cursor;
 
+import com.juojo.screens.Data;
+import com.juojo.screens.Mode;
+import com.juojo.screens.Screen;
 import com.juojo.util.ANSI;
 import com.juojo.virtualkeymapping.VK;
 
@@ -22,35 +25,35 @@ public class Cursor {
 		terminalCol = screen.getTerminalCol();
 	}
 	
-	// ROW LENGHT == DATA.GET ROW LENGHT ??
-	public void handleMovementKeys(int charCode, int rowLenght, int amountOfRows) {
+	public void handleMovementKeys(int charCode, Data data) {
+		int amountOfRows = data.getAmountOfRows();
 		
 		if (mode != Mode.EX_MODE) {
 			if (charCode == VK.ARROW_UP.getCode() && row > 1) {
 				// ARROW UP
 				row--;
-				handleColMemory();
+				handleColMemory(data.getRowLenght(row));
 			} else if (charCode == VK.ARROW_DOWN.getCode() && row < terminalRow) {
 				// ARROW DOWN
 				if (row < amountOfRows) {
 					row++;
-					handleColMemory();
+					handleColMemory(data.getRowLenght(row));
 				}
 			} else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
 				// ARROW RIGHT
 				if (row == 1) {
-					if (col == Data.getRowLenght(row)+1 && amountOfRows > row) {
+					if (col == data.getRowLenght(row)+1 && amountOfRows > row) {
 						row++;
 						col = 1;
 					} else {
-						if (col <= rowLenght) col++;
+						if (col <= data.getRowLenght(row)) col++;
 					}
 				} else {
-					if (col == Data.getRowLenght(row) && amountOfRows > row) {
+					if (col == data.getRowLenght(row) && amountOfRows > row) {
 						row++;
 						col = 1;
 					} else {
-						if (col < rowLenght) col++;
+						if (col < data.getRowLenght(row)) col++;
 					}
 						
 				}
@@ -61,8 +64,8 @@ public class Cursor {
 				// ARROW LEFT
 				if (col == 1 && row != 1) {
 					row--;
-					if (row == 1) col = Data.getRowLenght(row)+1;  // if it's the first line add one more unit
-					else col = Data.getRowLenght(row);
+					if (row == 1) col = data.getRowLenght(row)+1;  // if it's the first line add one more unit
+					else col = data.getRowLenght(row);
 				} else if (col > 1) { 
 					col--;
 				}
@@ -84,16 +87,16 @@ public class Cursor {
 		
 	}
 	
-	private void handleColMemory() {		
+	private void handleColMemory(int rowLenght) {		
 		// Assign maxCol
 		if (col > maxCol) {
 			maxCol = col;
 		}
 		
 		// Move cursor to maxCol
-		if (maxCol > Data.getRowLenght(row)) {			
-			if (row == 1) col = Data.getRowLenght(row)+1;  // if it's the first line add one more unit
-			else col = Data.getRowLenght(row); 
+		if (maxCol > rowLenght) {			
+			if (row == 1) col = rowLenght+1;  // if it's the first line add one more unit
+			else col = rowLenght; 
 		} else {
 			col = maxCol; 
 		}
