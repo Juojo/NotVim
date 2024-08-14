@@ -62,7 +62,8 @@ public class Data {
 		Screen.cursor.moveSet(1, 1);
 	}
 
-	protected void insert(char key, int row, int col) {
+	protected void insert(char key, int row, int col) {		
+		if (key == 13 || key == 10) return; // Don't insert \n or \r
 		
 		/* 
 		 This is probably the worst possible approach. Every time the user enters a new key this method is called.
