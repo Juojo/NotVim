@@ -41,21 +41,11 @@ public class Cursor {
 				}
 			} else if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
 				// ARROW RIGHT
-				if (row == 1) {
-					if (col == data.getRowLenght(row)+1 && amountOfRows > row) {
-						row++;
-						col = 1;
-					} else {
-						if (col <= data.getRowLenght(row)) col++;
-					}
+				if (col == data.getRowLenght(row)+1 && amountOfRows > row) {
+					row++;
+					col = 1;
 				} else {
-					if (col == data.getRowLenght(row) && amountOfRows > row) {
-						row++;
-						col = 1;
-					} else {
-						if (col < data.getRowLenght(row)) col++;
-					}
-						
+					if (col <= data.getRowLenght(row)) col++;
 				}
 				
 				// reset maxCol if the column position is changed
@@ -64,8 +54,7 @@ public class Cursor {
 				// ARROW LEFT
 				if (col == 1 && row != 1) {
 					row--;
-					if (row == 1) col = data.getRowLenght(row)+1;  // if it's the first line add one more unit
-					else col = data.getRowLenght(row);
+					col = data.getRowLenght(row)+1;
 				} else if (col > 1) { 
 					col--;
 				}
@@ -95,8 +84,7 @@ public class Cursor {
 		
 		// Move cursor to maxCol
 		if (maxCol > rowLenght) {			
-			if (row == 1) col = rowLenght+1;  // if it's the first line add one more unit
-			else col = rowLenght; 
+			col = rowLenght+1;
 		} else {
 			col = maxCol; 
 		}
