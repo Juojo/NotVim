@@ -140,10 +140,20 @@ public class Data {
 	
 	private void writeFile() {
 		try {
-			FileWriter fileWriter = new FileWriter(this.path.toString());
-			fileWriter.write(data.get(0)); // make this write all lines
-			fileWriter.close();
-			Alerts.newCustomAlert("The file has been successfully written in", "'"+this.path.toString()+"'", Colors.GREEN, null);
+			FileWriter writer = new FileWriter(this.path.toString());
+			
+			if (data.size() > 0) {
+				for (int i = 0; i < data.size(); i++) {
+					writer.write(data.get(i));
+					writer.write(System.lineSeparator()); // Unix: \n | Windows: \r\n
+				}
+				
+				Alerts.newCustomAlert("The file has been successfully written in", "'"+this.path.toString()+"'", Colors.GREEN, null);
+			} else {
+				Alerts.newCustomAlert("Error writing file", "There is no content to be written", Colors.RED, null);
+			}
+			
+			writer.close();
 		} catch (IndexOutOfBoundsException e) {
 			Alerts.newCustomAlert("Error writing file", "There is no content to be written", Colors.RED, null);
 		} catch (Exception e) {
