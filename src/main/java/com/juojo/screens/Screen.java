@@ -108,7 +108,7 @@ public abstract class Screen {
 		case INSERT_MODE: {
 			
 			if (charCode == 13 || charCode == 10) { // Enter);
-				cursor.moveSet(0, cursor.getRow()+1);
+				cursor.moveSet(1, cursor.getRow()+1);
 			}
 			
 			break;

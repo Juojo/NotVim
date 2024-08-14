@@ -107,7 +107,7 @@ public class Data {
 	private void updateLine(int line) {
 		ANSI.saveCursorPosition();
 		
-		ANSI.moveCursorToColumn(0);
+		ANSI.moveCursorToColumn(1);
 		System.out.print(data.get(line));
 		
 		ANSI.restoreCursorPosition();
@@ -166,6 +166,8 @@ public class Data {
 		int lenght;
 		
 		if (data.isEmpty()) {
+			lenght = 0;
+		} else if (data.size() < row) {
 			lenght = 0;
 		} else {
 			lenght = data.get(row-1).length();
