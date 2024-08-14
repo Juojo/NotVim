@@ -274,6 +274,11 @@ public abstract class Screen {
 		data = new Data();
 		data.readPrint(path);
 	}
+
+	public void writeData(String fileName) {
+		if (fileName == null) data.write(null);
+		else data.write(Path.of("./"+fileName));		
+	}
 	
 	//System.out.println("\033[4;44;31mHola\033[0m");
 }
