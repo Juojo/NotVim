@@ -31,7 +31,8 @@ public class CreateCommandInstance {
 			
 			if (command.equals("q") || command.equals("quit")) new Quit();
 			else if (command.equals("open")) new Open(args, executedFromScreen);
-			//else if (command.equals("w") || command.equals("write")) new Write();
+			else if (command.equals("w") || command.equals("write")) new Write(args, executedFromScreen);
+			//else if (command.equals("new")) new New();
 			else Alerts.COMMAND_NOT_FOUND.newAlert();
 		}
 	}
