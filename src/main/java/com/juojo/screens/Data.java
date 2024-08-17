@@ -14,6 +14,7 @@ import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
+import com.juojo.virtualkeymapping.VK;
 
 public class Data {
 
@@ -72,8 +73,14 @@ public class Data {
 		 https://www.averylaird.com/programming/the%20text%20editor/2017/09/30/the-piece-table
 		 for more info about data structures in text editors.
 		*/
-		
+
 		try {
+			// Remove position from data array if it has an EMPTY_LINE code
+			// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
+			if (data.get(row-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode()) {
+				data.remove(row-1);
+			}
+			
 			char[] currentLine = data.get(row-1).toCharArray();
 			char[] buffer = new char[currentLine.length+1];
 			
@@ -94,14 +101,17 @@ public class Data {
 			}
 			
 			data.set(row-1, new String(buffer));
-		} catch (Exception e) {
+		} catch (IndexOutOfBoundsException e) {
 			char[] buffer = new char[1];
 			buffer[0] = key;
 			
 			data.add(row-1, new String(buffer));
 		}
-		
-		updateLine(row-1);
+
+		// Don't print empty line char (it doesn't exist)
+		if (key != (char) VK.EMPTY_LINE.getCode()) {
+			updateLine(row-1); 
+		}
 	}
 	
 	private void updateLine(int line) {

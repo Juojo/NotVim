@@ -2,6 +2,7 @@ package com.juojo.virtualkeymapping;
 
 public enum VK {
 
+	EMPTY_LINE(-1),
 	ARROW_UP(-10),
 	ARROW_DOWN(-11),
 	ARROW_RIGHT(-12),

@@ -109,6 +109,7 @@ public abstract class Screen {
 			
 			if (charCode == 13 || charCode == 10) { // Enter);
 				cursor.moveSet(1, cursor.getRow()+1);
+				data.insert((char) VK.EMPTY_LINE.getCode(), cursor.getRow(), cursor.getCol());
 			}
 			
 			break;
