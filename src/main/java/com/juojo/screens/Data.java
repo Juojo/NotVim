@@ -77,30 +77,33 @@ public class Data {
 		try {
 			// Remove position from data array if it has an EMPTY_LINE code
 			// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
-			if (data.get(row-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode()) {
-				data.remove(row-1);
-			}
-			
-			char[] currentLine = data.get(row-1).toCharArray();
-			char[] buffer = new char[currentLine.length+1];
-			
-			for (int i = 0; i < buffer.length; i++) {
-				if (i < col-1) {
-					// The loop didn't reach the cursor position yet.
-					// Assign existing chars to the new arr (buffer).
-					buffer[i] = currentLine[i];
-				} else if (i == col-1) {
-					// The loop is at the cursor position.
-					// Add the new key to the buffer.
-					buffer[i] = key;
-				} else if (i > col-1)  {
-					// The loop is now after cursor position.
-					// Keep assigning existing chars to the buffer.
-					buffer[i] = currentLine[i-1];
+			if (isLineEmpty(row)) {
+				char[] buffer = new char[1];
+				buffer[0] = key;
+				
+				data.set(row-1, new String(buffer));
+			} else {
+				char[] currentLine = data.get(row-1).toCharArray();
+				char[] buffer = new char[currentLine.length+1];
+				
+				for (int i = 0; i < buffer.length; i++) {
+					if (i < col-1) {
+						// The loop didn't reach the cursor position yet.
+						// Assign existing chars to the new arr (buffer).
+						buffer[i] = currentLine[i];
+					} else if (i == col-1) {
+						// The loop is at the cursor position.
+						// Add the new key to the buffer.
+						buffer[i] = key;
+					} else if (i > col-1)  {
+						// The loop is now after cursor position.
+						// Keep assigning existing chars to the buffer.
+						buffer[i] = currentLine[i-1];
+					}
 				}
+				
+				data.set(row-1, new String(buffer));
 			}
-			
-			data.set(row-1, new String(buffer));
 		} catch (IndexOutOfBoundsException e) {
 			char[] buffer = new char[1];
 			buffer[0] = key;
@@ -155,7 +158,8 @@ public class Data {
 			
 			if (data.size() > 0) {
 				for (int i = 0; i < data.size(); i++) {
-					writer.write(data.get(i));
+					if (!isLineEmpty(i+1)) writer.write(data.get(i));
+
 					writer.write(System.lineSeparator()); // Unix: \n | Windows: \r\n
 				}
 				
@@ -171,6 +175,10 @@ public class Data {
 			Alerts.newCustomAlert("Error writing file", e.toString(), Colors.RED, null);
 		}		
 	}
+	
+	private boolean isLineEmpty(int line) {
+		return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
+	}
 
 	public int getRowLenght(int row) {
 		int lenght;
@@ -178,6 +186,8 @@ public class Data {
 		if (data.isEmpty()) {
 			lenght = 0;
 		} else if (data.size() < row) {
+			lenght = 0;
+		} else if (isLineEmpty(row)) {
 			lenght = 0;
 		} else {
 			lenght = data.get(row-1).length();
