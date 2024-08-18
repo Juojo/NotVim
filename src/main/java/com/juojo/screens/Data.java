@@ -8,6 +8,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.juojo.util.ANSI;
@@ -32,7 +33,8 @@ public class Data {
 		
 		if (Screen.canHandleFiles()) { 
 			try (Stream<String> stream = Files.lines(this.path)) {
-				data = stream.toList();
+				//data = stream.toList();
+				data = stream.collect(Collectors.toCollection(ArrayList::new));
 				printFile();				
 			} catch (FileNotFoundException e) {
 				Alerts.FILE_NOT_FOUND.newAlert();
@@ -169,15 +171,14 @@ public class Data {
 			}
 			
 			writer.close();
-		} catch (IndexOutOfBoundsException e) {
-			Alerts.newCustomAlert("Error writing file", "There is no content to be written", Colors.RED, null);
 		} catch (Exception e) {
 			Alerts.newCustomAlert("Error writing file", e.toString(), Colors.RED, null);
 		}		
 	}
 	
 	private boolean isLineEmpty(int line) {
-		return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
+		if (data.get(line-1).length() == 0) return true;
+		else return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
 	}
 
 	public int getRowLenght(int row) {
@@ -186,8 +187,6 @@ public class Data {
 		if (data.isEmpty()) {
 			lenght = 0;
 		} else if (data.size() < row) {
-			lenght = 0;
-		} else if (data.get(row-1).length() == 0) {
 			lenght = 0;
 		} else if (isLineEmpty(row)) {
 			lenght = 0;
