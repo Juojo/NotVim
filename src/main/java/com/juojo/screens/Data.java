@@ -33,7 +33,7 @@ public class Data {
 		if (Screen.canHandleFiles()) { 
 			try (Stream<String> stream = Files.lines(this.path)) {
 				data = stream.toList();
-				printFile();
+				printFile();				
 			} catch (FileNotFoundException e) {
 				Alerts.FILE_NOT_FOUND.newAlert();
 			} catch (NoSuchFileException e) {
@@ -186,6 +186,8 @@ public class Data {
 		if (data.isEmpty()) {
 			lenght = 0;
 		} else if (data.size() < row) {
+			lenght = 0;
+		} else if (data.get(row-1).length() == 0) {
 			lenght = 0;
 		} else if (isLineEmpty(row)) {
 			lenght = 0;
