@@ -1,5 +1,6 @@
 package com.juojo.screens;
 
+import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -67,6 +68,7 @@ public class Data {
 
 	protected void insert(char key, int row, int col) {		
 		if (key == 13 || key == 10) return; // Don't insert \n or \r
+		if (key == 127) return; // Don't insert delete
 		
 		/* 
 		 This is probably the worst possible approach. Every time the user enters a new key this method is called.
@@ -75,7 +77,7 @@ public class Data {
 		 https://www.averylaird.com/programming/the%20text%20editor/2017/09/30/the-piece-table
 		 for more info about data structures in text editors.
 		*/
-
+		
 		try {
 			// Remove position from data array if it has an EMPTY_LINE code
 			// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
@@ -115,7 +117,7 @@ public class Data {
 
 		// Don't print empty line char (it doesn't exist)
 		if (key != (char) VK.EMPTY_LINE.getCode()) {
-			updateLine(row-1); 
+			updateLine(row-1);
 		}
 	}
 	
@@ -124,11 +126,40 @@ public class Data {
 		
 		ANSI.moveCursorToColumn(1);
 		System.out.print(data.get(line));
+		ANSI.deleteEndOfRow();
 		
 		ANSI.restoreCursorPosition();
 		
 		Screen.cursor.incrementCol(1);
 		Screen.cursor.updatePosition();
+	}
+	
+	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
+		if (data.isEmpty()) return;
+		
+		String currentLine = data.get(row-1);
+		
+		if (col == 1) {
+			ANSI.deleteEndOfRow();
+			
+			cursor.moveSet(getRowLenght(row-1), row-1);
+		
+			data.set(row-2, data.get(row-2) + (!isLineEmpty(row) ? currentLine : "") );
+			data.remove(row-1);
+			
+			updateLine(row-2);
+		} else {
+			String firstSegment = currentLine.substring(0, col-2);
+			String secondSegment = currentLine.substring(col-1, currentLine.length());
+			
+			data.set(row-1, firstSegment+secondSegment);
+			
+			cursor.moveSet(col-2, row);
+			
+			updateLine(row-1);
+		}
+						
+		
 	}
 	
 	protected void write(Path path) {		
