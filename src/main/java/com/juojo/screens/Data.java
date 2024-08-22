@@ -118,6 +118,8 @@ public class Data {
 		// Don't print empty line char (it doesn't exist)
 		if (key != (char) VK.EMPTY_LINE.getCode()) {
 			updateLine(row-1);
+			Screen.cursor.incrementCol(1);
+			Screen.cursor.updatePosition();
 		}
 	}
 	
@@ -125,13 +127,29 @@ public class Data {
 		ANSI.saveCursorPosition();
 		
 		ANSI.moveCursorToColumn(1);
-		System.out.print(data.get(line));
+		if (!isLineEmpty(line+1)) System.out.print(data.get(line));
 		ANSI.deleteEndOfRow();
 		
 		ANSI.restoreCursorPosition();
+	}	
+	
+	private void updateAllLines() {
+		ANSI.saveCursorPosition();
 		
-		Screen.cursor.incrementCol(1);
-		Screen.cursor.updatePosition();
+		ANSI.moveCursorHome();
+		
+		for (int i = 0; i < data.size(); i++) {
+			ANSI.moveCursorToColumn(1);
+			if (!isLineEmpty(i+1)) System.out.print(data.get(i));
+			ANSI.deleteEndOfRow();
+			ANSI.moveCursorDown(1);
+		}
+		
+		// Delete last line
+		ANSI.moveCursorToColumn(1);
+		ANSI.deleteEndOfRow();
+		
+		ANSI.restoreCursorPosition();
 	}
 	
 	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
@@ -140,21 +158,27 @@ public class Data {
 		String currentLine = data.get(row-1);
 		
 		if (col == 1) {
-			ANSI.deleteEndOfRow();
+			cursor.moveSet(getRowLenght(row-1)+1, row-1);
 			
-			cursor.moveSet(getRowLenght(row-1), row-1);
-		
-			data.set(row-2, data.get(row-2) + (!isLineEmpty(row) ? currentLine : "") );
-			data.remove(row-1);
+			if (isLineEmpty(row-1)) {
+				if (!isLineEmpty(row)) {
+					data.set(row-2, currentLine);
+				}
+			} else {
+				if (!isLineEmpty(row)) {
+					data.set(row-2, data.get(row-2) + currentLine);
+				}
+			}
 			
-			updateLine(row-2);
+			data.remove(row-1);			
+			updateAllLines();
 		} else {
 			String firstSegment = currentLine.substring(0, col-2);
 			String secondSegment = currentLine.substring(col-1, currentLine.length());
 			
 			data.set(row-1, firstSegment+secondSegment);
 			
-			cursor.moveSet(col-2, row);
+			cursor.moveSet(col-1, row);
 			
 			updateLine(row-1);
 		}
@@ -208,7 +232,8 @@ public class Data {
 	}
 	
 	private boolean isLineEmpty(int line) {
-		if (data.get(line-1).length() == 0) return true;
+		if (line-1 < 0) return true;
+		else if (data.get(line-1).length() == 0) return true;
 		else return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
 	}
 
