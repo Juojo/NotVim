@@ -1,6 +1,5 @@
 package com.juojo.screens;
 
-import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -34,7 +33,6 @@ public class Data {
 		
 		if (Screen.canHandleFiles()) { 
 			try (Stream<String> stream = Files.lines(this.path)) {
-				//data = stream.toList();
 				data = stream.collect(Collectors.toCollection(ArrayList::new));
 				printFile();				
 			} catch (FileNotFoundException e) {
@@ -43,27 +41,10 @@ public class Data {
 				Alerts.FILE_NOT_FOUND.newAlert();
 			} catch (Exception e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
-				//e.printStackTrace();
 			}	
 		} else {
 			Alerts.CANT_OPEN_FILE.newAlert();
 		}
-	}
-	
-	private void printFile() {
-		ANSI.moveCursorHome();
-		
-		for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
-			if (i >= data.size()) {
-				System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
-			} else {
-				System.out.print(data.get(i));
-			}
-			ANSI.deleteEndOfRow();
-			System.out.print("\r\n");
-		}
-		
-		Screen.cursor.moveSet(1, 1);
 	}
 
 	protected void insert(char key, int row, int col) {		
@@ -71,9 +52,9 @@ public class Data {
 		if (key == 127) return; // Don't insert delete
 		
 		/* 
-		 This is probably the worst possible approach. Every time the user enters a new key this method is called.
-		 Creating a completely new array for the line that is being edited just to add a new char.
-		 It can be improved if a different data structure is implemented. See:
+		 Every time the user enters a new key this method is called. Creating a completely new array
+		 for the line that is being edited just to add a new char. It can be improved if a different
+		 data structure is implemented. See:
 		 https://www.averylaird.com/programming/the%20text%20editor/2017/09/30/the-piece-table
 		 for more info about data structures in text editors.
 		*/
@@ -121,35 +102,6 @@ public class Data {
 			Screen.cursor.incrementCol(1);
 			Screen.cursor.updatePosition();
 		}
-	}
-	
-	private void updateLine(int line) {
-		ANSI.saveCursorPosition();
-		
-		ANSI.moveCursorToColumn(1);
-		if (!isLineEmpty(line+1)) System.out.print(data.get(line));
-		ANSI.deleteEndOfRow();
-		
-		ANSI.restoreCursorPosition();
-	}	
-	
-	private void updateAllLines() {
-		ANSI.saveCursorPosition();
-		
-		ANSI.moveCursorHome();
-		
-		for (int i = 0; i < data.size(); i++) {
-			ANSI.moveCursorToColumn(1);
-			if (!isLineEmpty(i+1)) System.out.print(data.get(i));
-			ANSI.deleteEndOfRow();
-			ANSI.moveCursorDown(1);
-		}
-		
-		// Delete last line
-		ANSI.moveCursorToColumn(1);
-		ANSI.deleteEndOfRow();
-		
-		ANSI.restoreCursorPosition();
 	}
 	
 	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
@@ -231,10 +183,55 @@ public class Data {
 		}		
 	}
 	
+	private void printFile() {
+		ANSI.moveCursorHome();
+		
+		for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
+			if (i >= data.size()) {
+				System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+			} else {
+				System.out.print(data.get(i));
+			}
+			ANSI.deleteEndOfRow();
+			System.out.print("\r\n");
+		}
+		
+		Screen.cursor.moveSet(1, 1);
+	}
+	
 	private boolean isLineEmpty(int line) {
 		if (line-1 < 0) return true;
 		else if (data.get(line-1).length() == 0) return true;
 		else return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
+	}
+	
+	private void updateLine(int line) {
+		ANSI.saveCursorPosition();
+		
+		ANSI.moveCursorToColumn(1);
+		if (!isLineEmpty(line+1)) System.out.print(data.get(line));
+		ANSI.deleteEndOfRow();
+		
+		ANSI.restoreCursorPosition();
+	}	
+	
+	private void updateAllLines() {
+		ANSI.saveCursorPosition();
+		
+		ANSI.moveCursorHome();
+		
+		for (int i = 0; i < data.size(); i++) {
+			ANSI.moveCursorToColumn(1);
+			if (!isLineEmpty(i+1)) System.out.print(data.get(i));
+			ANSI.deleteEndOfRow();
+			ANSI.moveCursorDown(1);
+		}
+		
+		// Delete last line
+		ANSI.moveCursorToColumn(1);
+		ANSI.deleteEndOfRow();
+		
+		ANSI.restoreCursorPosition();
 	}
 
 	public int getRowLenght(int row) {
