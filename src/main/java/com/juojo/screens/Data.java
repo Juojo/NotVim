@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.juojo.Main;
 import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
@@ -21,7 +22,9 @@ public class Data {
 
 	private List<String> data;
 	private Path path;
-	File file;
+	private File file;
+	
+	private String commandData;
 
 	protected Data() {
 		data = new ArrayList<>();
@@ -101,6 +104,39 @@ public class Data {
 			updateLine(row-1);
 			Screen.cursor.incrementCol(1);
 			Screen.cursor.updatePosition();
+		}
+	}
+	
+	protected void insertCommand(char key, int col) {
+		if (key == 13 || key == 10) return; // Don't insert \n or \r
+		if (key == 127) return; // Don't insert delete
+		if (key == 58) return; // Don't insert :
+		
+		try {
+			char[] currentLine = commandData.toCharArray();
+			char[] buffer = new char[currentLine.length+1];
+			
+			for (int i = 0; i < buffer.length; i++) {
+				if (i < col-1) {
+					// The loop didn't reach the cursor position yet.
+					// Assign existing chars to the new arr (buffer).
+					buffer[i] = currentLine[i];
+				} else if (i == col-1) {
+					// The loop is at the cursor position.
+					// Add the new key to the buffer.
+					buffer[i] = key;
+				} else if (i > col-1) {
+					// The loop is now after cursor position.
+					// Keep assigning existing chars to the buffer.
+					buffer[i] = currentLine[i-1];
+				}
+			}
+			
+			commandData = new String(buffer);
+			updateCommandModeLine();
+			Screen.cursor.incrementExCol(1);
+		} catch (Exception e) {
+			Alerts.newCustomAlert("Error inserting command data", e.toString(), Colors.RED, null);
 		}
 	}
 	
@@ -234,6 +270,16 @@ public class Data {
 		ANSI.restoreCursorPosition();
 	}
 
+	private void updateCommandModeLine() {
+		ANSI.saveCursorPosition();
+		
+		ANSI.moveCursor(Main.rows, 1);
+		System.out.print(":" + commandData);
+		ANSI.deleteEndOfRow();
+		
+		ANSI.restoreCursorPosition();
+	}
+	
 	public int getRowLenght(int row) {
 		int lenght;
 		
@@ -260,6 +306,14 @@ public class Data {
 		}
 		
 		return amount;
+	}
+
+	public void clearCommandData() {
+		commandData = "";		
+	}
+	
+	public String getCommandData() {
+		return commandData;
 	}
 	
 }

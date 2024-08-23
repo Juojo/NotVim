@@ -28,8 +28,8 @@ public abstract class Screen {
 	
 	protected Mode mode;
 	
-	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
-	private String userInput = "";
+//	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
+//	private String userInput = "";
 	
 	protected Screen(int row, int col, boolean canHandleFiles) {
 		resizeScreen(row, col);
@@ -123,22 +123,24 @@ public abstract class Screen {
 			
 			if (charCode != 27) {
 				if (charCode != 13 && charCode != 10) {
-					charCodeList.add(charCode);
+					//charCodeList.add(charCode);
+					data.insertCommand((char) charCode, cursor.getExCol());
 				} else {
 					cleanRow();
 					cursor.setExCol(1);
 
-					// Remove all unnecessary : from the start of charCodeList
-					while (!charCodeList.isEmpty() && charCodeList.getFirst() == 58) {
-						charCodeList.removeFirst();
-					}
-					
-					userInput = charCodeListToString(charCodeList);
-					new CreateCommandInstance(userInput, this);
+//					// Remove all unnecessary : from the start of charCodeList
+//					while (!charCodeList.isEmpty() && charCodeList.getFirst() == 58) {
+//						charCodeList.removeFirst();
+//					}
+//					
+//					userInput = charCodeListToString(charCodeList);
+					new CreateCommandInstance(data.getCommandData(), this);
 					
 					changeMode(Mode.NORMAL_MODE);
-					charCodeList.clear();
-					userInput = "";
+					//charCodeList.clear();
+					data.clearCommandData();
+					//userInput = "";
 				}
 			}
 			
@@ -188,8 +190,9 @@ public abstract class Screen {
 				cursor.moveSet(currentCol, currentRow);
 				
 				// Make sure incomplete commands are cleaned
-				charCodeList.clear();
-				userInput = "";
+				//charCodeList.clear();
+				data.clearCommandData();
+				//userInput = "";
 			}
 		}
 		

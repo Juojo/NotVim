@@ -39,8 +39,8 @@ public class TextViewer extends Screen {
 				if (super.mode == Mode.INSERT_MODE) {
 					super.data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
 				} else if (super.mode == Mode.EX_MODE) {
-					printChar();
-					cursor.incrementExCol(1);
+//					printChar();
+//					cursor.incrementExCol(1);
 				}
 			}
 		}
