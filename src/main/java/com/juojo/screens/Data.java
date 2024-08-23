@@ -175,6 +175,18 @@ public class Data {
 		
 	}
 	
+	protected int deleteCommand(int col) {
+		if (commandData.isEmpty()) return 0;
+				
+		String firstSegment = commandData.substring(0, col-3);
+		String secondSegment = commandData.substring(col-2, commandData.length());
+		
+		commandData = firstSegment+secondSegment;
+		updateCommandModeLine();
+		
+		return col-1;
+	}
+	
 	protected void write(Path path) {		
 		if (path != null) {
 			// Check if the path provided is the same one stored in Data

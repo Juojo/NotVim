@@ -122,16 +122,20 @@ public abstract class Screen {
 		case EX_MODE: {
 			
 			if (charCode != 27) {
-				if (charCode != 13 && charCode != 10) {
-					data.insertCommand((char) charCode, cursor.getExCol());
+				if (charCode == 127) {
+					cursor.setExCol(data.deleteCommand(cursor.getExCol()));
 				} else {
-					cleanRow();
-					cursor.setExCol(1);
+					if (charCode != 13 && charCode != 10) {
+						data.insertCommand((char) charCode, cursor.getExCol());
+					} else {
+						cleanRow();
+						cursor.setExCol(1);
 
-					new CreateCommandInstance(data.getCommandData(), this);
-					
-					changeMode(Mode.NORMAL_MODE);
-					data.clearCommandData();
+						new CreateCommandInstance(data.getCommandData(), this);
+						
+						changeMode(Mode.NORMAL_MODE);
+						data.clearCommandData();
+					}
 				}
 			}
 			
