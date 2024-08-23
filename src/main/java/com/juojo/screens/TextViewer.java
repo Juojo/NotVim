@@ -38,9 +38,6 @@ public class TextViewer extends Screen {
 			if (super.charCode >= 0) {
 				if (super.mode == Mode.INSERT_MODE) {
 					super.data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
-				} else if (super.mode == Mode.EX_MODE) {
-//					printChar();
-//					cursor.incrementExCol(1);
 				}
 			}
 		}
@@ -50,10 +47,6 @@ public class TextViewer extends Screen {
 		for (int i = 0; i < super.getTerminalRow()-super.getStatusHeight(); i++) {
 			System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
 		}
-	}
-
-	private void printChar() {
-		System.out.print((char) super.charCode);
 	}
 
 }

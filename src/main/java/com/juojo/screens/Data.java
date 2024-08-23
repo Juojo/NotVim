@@ -117,18 +117,18 @@ public class Data {
 			char[] buffer = new char[currentLine.length+1];
 			
 			for (int i = 0; i < buffer.length; i++) {
-				if (i < col-1) {
+				if (i < col-2) {
 					// The loop didn't reach the cursor position yet.
 					// Assign existing chars to the new arr (buffer).
 					buffer[i] = currentLine[i];
-				} else if (i == col-1) {
+				} else if (i == col-2) {
 					// The loop is at the cursor position.
 					// Add the new key to the buffer.
 					buffer[i] = key;
-				} else if (i > col-1) {
+				} else if (i > col-2) {
 					// The loop is now after cursor position.
 					// Keep assigning existing chars to the buffer.
-					buffer[i] = currentLine[i-1];
+					buffer[i] = currentLine[i-2];
 				}
 			}
 			
@@ -137,6 +137,7 @@ public class Data {
 			Screen.cursor.incrementExCol(1);
 		} catch (Exception e) {
 			Alerts.newCustomAlert("Error inserting command data", e.toString(), Colors.RED, null);
+			Screen.cursor.setExCol(1);
 		}
 	}
 	

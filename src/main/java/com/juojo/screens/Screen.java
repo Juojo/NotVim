@@ -123,24 +123,15 @@ public abstract class Screen {
 			
 			if (charCode != 27) {
 				if (charCode != 13 && charCode != 10) {
-					//charCodeList.add(charCode);
 					data.insertCommand((char) charCode, cursor.getExCol());
 				} else {
 					cleanRow();
 					cursor.setExCol(1);
 
-//					// Remove all unnecessary : from the start of charCodeList
-//					while (!charCodeList.isEmpty() && charCodeList.getFirst() == 58) {
-//						charCodeList.removeFirst();
-//					}
-//					
-//					userInput = charCodeListToString(charCodeList);
 					new CreateCommandInstance(data.getCommandData(), this);
 					
 					changeMode(Mode.NORMAL_MODE);
-					//charCodeList.clear();
 					data.clearCommandData();
-					//userInput = "";
 				}
 			}
 			
@@ -186,13 +177,13 @@ public abstract class Screen {
 				
 			if (mode == Mode.EX_MODE) {
 				ANSI.moveCursor(terminalRow, 0);
+				System.out.print(":");
+				cursor.incrementExCol(1);
 			} else {
 				cursor.moveSet(currentCol, currentRow);
 				
 				// Make sure incomplete commands are cleaned
-				//charCodeList.clear();
 				data.clearCommandData();
-				//userInput = "";
 			}
 		}
 		
