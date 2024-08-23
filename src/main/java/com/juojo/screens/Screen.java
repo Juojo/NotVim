@@ -124,6 +124,14 @@ public abstract class Screen {
 			if (charCode != 27) {
 				if (charCode == 127) {
 					cursor.setExCol(data.deleteCommand(cursor.getExCol()));
+				} else if (charCode == 58) { // :
+					cursor.setExCol(1);
+					cleanRow();
+					data.clearCommandData();
+										
+					System.out.print(":");
+					cursor.incrementExCol(1);
+					
 				} else {
 					if (charCode != 13 && charCode != 10) {
 						data.insertCommand((char) charCode, cursor.getExCol());
