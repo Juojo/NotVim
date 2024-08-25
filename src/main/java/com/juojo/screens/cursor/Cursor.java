@@ -65,10 +65,10 @@ public class Cursor {
 			
 			ANSI.moveCursor(row, col); // row, col
 		} else {
-			if (charCode == VK.ARROW_RIGHT.getCode() && col < terminalCol) {
+			if (charCode == VK.ARROW_RIGHT.getCode() && exCol < terminalCol) {
 				exCol++;
-			} else if (charCode == VK.ARROW_LEFT.getCode() && col > 1) {
-				exCol--;
+			} else if (charCode == VK.ARROW_LEFT.getCode() && exCol > 1) {
+				exCol --;
 			}
 			
 			ANSI.moveCursorToColumn(exCol);

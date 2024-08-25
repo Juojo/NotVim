@@ -97,6 +97,11 @@ public abstract class Screen {
 			} else if (charCode == 58) { // :
 				Alerts.setActiveAlertFalse();
 				changeMode(Mode.EX_MODE);
+				
+				ANSI.moveCursor(terminalRow, 0);
+				cursor.setExCol(1);
+				System.out.print(":");
+				cursor.incrementExCol(1);
 			}
 			
 			// u -> undo
@@ -134,7 +139,9 @@ public abstract class Screen {
 					
 				} else {
 					if (charCode != 13 && charCode != 10) {
-						data.insertCommand((char) charCode, cursor.getExCol());
+						if (charCode > 0) {
+							data.insertCommand((char) charCode, cursor.getExCol());
+						}						
 					} else {
 						cleanRow();
 						cursor.setExCol(1);
@@ -189,8 +196,6 @@ public abstract class Screen {
 				
 			if (mode == Mode.EX_MODE) {
 				ANSI.moveCursor(terminalRow, 0);
-				System.out.print(":");
-				cursor.incrementExCol(1);
 			} else {
 				cursor.moveSet(currentCol, currentRow);
 				

@@ -108,6 +108,7 @@ public class Data {
 	}
 	
 	protected void insertCommand(char key, int col) {
+		if (key < 0) return; // Don't insert virtual key binds
 		if (key == 13 || key == 10) return; // Don't insert \n or \r
 		if (key == 127) return; // Don't insert delete
 		if (key == 58) return; // Don't insert :
