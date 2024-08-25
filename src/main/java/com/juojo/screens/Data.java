@@ -24,7 +24,7 @@ public class Data {
 	private Path path;
 	private File file;
 	
-	private String commandData;
+	private String commandData = "";
 
 	protected Data() {
 		data = new ArrayList<>();
@@ -284,7 +284,7 @@ public class Data {
 		ANSI.restoreCursorPosition();
 	}
 
-	private void updateCommandModeLine() {
+	protected void updateCommandModeLine() {
 		ANSI.saveCursorPosition();
 		
 		ANSI.moveCursor(Main.rows, 1);
