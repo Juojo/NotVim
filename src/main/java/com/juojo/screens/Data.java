@@ -129,7 +129,7 @@ public class Data {
 				} else if (i > col-2) {
 					// The loop is now after cursor position.
 					// Keep assigning existing chars to the buffer.
-					buffer[i] = currentLine[i-2];
+					buffer[i] = currentLine[i-1];
 				}
 			}
 			
@@ -177,7 +177,7 @@ public class Data {
 	}
 	
 	protected int deleteCommand(int col) {
-		if (commandData.isEmpty()) return 0;
+		if (commandData.isEmpty() || col == 2) return col;
 				
 		String firstSegment = commandData.substring(0, col-3);
 		String secondSegment = commandData.substring(col-2, commandData.length());
@@ -308,6 +308,10 @@ public class Data {
 		}
 		
 		return lenght;
+	}	
+
+	public int getCommandRowLenght() {
+		return commandData.length();
 	}
 
 	public int getAmountOfRows() {
