@@ -93,6 +93,14 @@ public class Data {
 				data.set(row-1, new String(buffer));
 			}
 		} catch (IndexOutOfBoundsException e) {
+			// Add EMPTY_LINE to the first position of data if the user wants to input an enter as their first line on the file
+			if (data.isEmpty() && row-1 == 1) {
+				char[] firstEmpty = new char[1];
+				firstEmpty[0] = (char) VK.EMPTY_LINE.getCode();
+				data.add(0, new String(firstEmpty));
+				updateLine(0);
+			}
+			
 			char[] buffer = new char[1];
 			buffer[0] = key;
 			
@@ -258,7 +266,7 @@ public class Data {
 	private void updateLine(int line) {
 		ANSI.saveCursorPosition();
 		
-		ANSI.moveCursorToColumn(1);
+		ANSI.moveCursor(line+1, 1);
 		if (!isLineEmpty(line+1)) System.out.print(data.get(line));
 		ANSI.deleteEndOfRow();
 		
@@ -284,7 +292,7 @@ public class Data {
 		
 		ANSI.restoreCursorPosition();
 	}
-
+		
 	protected void updateCommandModeLine() {
 		ANSI.saveCursorPosition();
 		
