@@ -111,8 +111,10 @@ public abstract class Screen {
 		case INSERT_MODE: {
 			
 			if (charCode == 13 || charCode == 10) { // Enter
+				int actualCol = cursor.getCol();
 				cursor.moveSet(1, cursor.getRow()+1);
 				data.insert((char) VK.EMPTY_LINE.getCode(), cursor.getRow(), cursor.getCol());
+				data.handleEnter(cursor.getRow()-1, actualCol);
 			} else if (charCode == 127) { // Delete
 				data.delete(cursor.getRow(), cursor.getCol(), cursor);
 			} else if (charCode >= 0) { // Not VK

@@ -52,7 +52,7 @@ public class Data {
 
 	protected void insert(char key, int row, int col) {		
 		if (key == 13 || key == 10) return; // Don't insert \n or \r
-		if (key == 127) return; // Don't insert delete
+		if (key == 127) return; // Don't insert delete		
 		
 		/* 
 		 Every time the user enters a new key this method is called. Creating a completely new array
@@ -113,6 +113,30 @@ public class Data {
 			//Screen.cursor.updatePosition();
 		}
 		updateLine(row-1);
+	}
+	
+	protected void handleEnter(int row, int col) {
+		if (row < 1) return;
+		if (data.isEmpty()) return;
+		if (col-1 == getRowLenght(row)) return;
+		if (isLineEmpty(row)) {
+			char[] buffer = new char[1];
+			buffer[0] = (char) VK.EMPTY_LINE.getCode();
+			
+			data.add(row, new String(buffer));
+		}
+		
+		// Update previous line data content
+		String firstSegment = data.get(row-1).substring(0, col-1);
+		String secondSegment = data.get(row-1).substring(col-1, data.get(row-1).length());
+		data.set(row-1, firstSegment);
+		
+		// Update actual line data content
+		String actualLine = data.get(row);
+		data.set(row, secondSegment+actualLine.substring(1, actualLine.length())); // Substring removes EMPTY_LINE from start of actualLine String
+
+		// Update prints from screen
+		updateAllLines();
 	}
 	
 	protected void insertCommand(char key, int col) {
@@ -290,7 +314,7 @@ public class Data {
 			ANSI.moveCursorDown(1);
 		}
 		
-		// Delete last line
+		// Delete last line + 1 
 		ANSI.moveCursorToColumn(1);
 		ANSI.deleteEndOfRow();
 		System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
