@@ -63,9 +63,14 @@ public class Data {
 		*/
 		
 		try {
-			// Remove position from data array if it has an EMPTY_LINE code
-			// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
-			if (isLineEmpty(row)) {
+			if (key == (char) VK.EMPTY_LINE.getCode()) {
+				char[] buffer = new char[1];
+				buffer[0] = key;
+				data.add(row-1, new String(buffer));
+				updateAllLines();
+			} else if (isLineEmpty(row)) {
+				// Remove position from data array if it has an EMPTY_LINE code
+				// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
 				char[] buffer = new char[1];
 				buffer[0] = key;
 				
@@ -115,16 +120,9 @@ public class Data {
 		updateLine(row-1);
 	}
 	
-	protected void handleEnter(int row, int col) {
+	protected void handleEnterBetweenText(int row, int col) {
 		if (row < 1) return;
 		if (data.isEmpty()) return;
-		if (col-1 == getRowLenght(row)) return;
-		if (isLineEmpty(row)) {
-			char[] buffer = new char[1];
-			buffer[0] = (char) VK.EMPTY_LINE.getCode();
-			
-			data.add(row, new String(buffer));
-		}
 		
 		// Update previous line data content
 		String firstSegment = data.get(row-1).substring(0, col-1);

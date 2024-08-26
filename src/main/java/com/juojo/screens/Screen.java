@@ -114,7 +114,7 @@ public abstract class Screen {
 				int actualCol = cursor.getCol();
 				cursor.moveSet(1, cursor.getRow()+1);
 				data.insert((char) VK.EMPTY_LINE.getCode(), cursor.getRow(), cursor.getCol());
-				data.handleEnter(cursor.getRow()-1, actualCol);
+				data.handleEnterBetweenText(cursor.getRow()-1, actualCol);
 			} else if (charCode == 127) { // Delete
 				data.delete(cursor.getRow(), cursor.getCol(), cursor);
 			} else if (charCode >= 0) { // Not VK
