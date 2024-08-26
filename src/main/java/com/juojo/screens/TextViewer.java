@@ -32,13 +32,6 @@ public class TextViewer extends Screen {
 				super.handleKey();
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
-				//e.printStackTrace();
-			}
-			
-			if (super.charCode >= 0) {
-				if (super.mode == Mode.INSERT_MODE) {
-					super.data.insert((char) super.charCode, cursor.getRow(), cursor.getCol());
-				}
 			}
 		}
 	}

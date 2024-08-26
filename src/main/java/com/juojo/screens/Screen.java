@@ -110,14 +110,13 @@ public abstract class Screen {
 		}
 		case INSERT_MODE: {
 			
-			if (charCode == 13 || charCode == 10) { // Enter);
+			if (charCode == 13 || charCode == 10) { // Enter
 				cursor.moveSet(1, cursor.getRow()+1);
 				data.insert((char) VK.EMPTY_LINE.getCode(), cursor.getRow(), cursor.getCol());
-			} else if (charCode == 127) {				
+			} else if (charCode == 127) { // Delete
 				data.delete(cursor.getRow(), cursor.getCol(), cursor);
-				//cursor.moveSet(cursor.getCol()-2, cursor.getRow());
-				
-				
+			} else if (charCode >= 0) { // Not VK
+				data.insert((char) charCode, cursor.getRow(), cursor.getCol());
 			}
 			
 			break;
