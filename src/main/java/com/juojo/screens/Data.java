@@ -152,6 +152,7 @@ public class Data {
 	
 	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
 		if (data.isEmpty()) return;
+		if (row == 1 && col == 1) return;
 		
 		String currentLine = data.get(row-1);
 		
@@ -180,8 +181,12 @@ public class Data {
 			
 			updateLine(row-1);
 		}
-						
 		
+		// Clear data if the only value stored is EMPTY_LINE
+		if (data.size() == 1 && isLineEmpty(1)) {
+			data.clear();
+			System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+		}
 	}
 	
 	protected int deleteCommand(int col) {
