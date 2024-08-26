@@ -99,12 +99,12 @@ public class Data {
 			data.add(row-1, new String(buffer));
 		}
 
-		// Don't print empty line char (it doesn't exist)
-		if (key != (char) VK.EMPTY_LINE.getCode()) {
-			updateLine(row-1);
+		// Don't increment cursor position if the char inserted is EMPTY_LINE
+		if (key != (char) VK.EMPTY_LINE.getCode()) {			
 			Screen.cursor.incrementCol(1);
-			Screen.cursor.updatePosition();
+			//Screen.cursor.updatePosition();
 		}
+		updateLine(row-1);
 	}
 	
 	protected void insertCommand(char key, int col) {
@@ -280,6 +280,7 @@ public class Data {
 		// Delete last line
 		ANSI.moveCursorToColumn(1);
 		ANSI.deleteEndOfRow();
+		System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
 		
 		ANSI.restoreCursorPosition();
 	}
