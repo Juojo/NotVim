@@ -29,30 +29,13 @@ public class Data {
 	protected Data() {
 		data = new ArrayList<>();
 	}
-	
-	protected void readPrint(Path path) {
-		this.path = path;
-		this.file = new File(path.toString());
-		
-		if (Screen.canHandleFiles()) { 
-			try (Stream<String> stream = Files.lines(this.path)) {
-				data = stream.collect(Collectors.toCollection(ArrayList::new));
-				printFile();				
-			} catch (FileNotFoundException e) {
-				Alerts.FILE_NOT_FOUND.newAlert();
-			} catch (NoSuchFileException e) {
-				Alerts.FILE_NOT_FOUND.newAlert();
-			} catch (Exception e) {
-				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
-			}	
-		} else {
-			Alerts.CANT_OPEN_FILE.newAlert();
-		}
-	}
 
-	protected void insert(char key, int row, int col) {		
-		if (key == 13 || key == 10) return; // Don't insert \n or \r
-		if (key == 127) return; // Don't insert delete		
+	/**
+	 * @return Updated column position.
+	*/
+	protected int insert(char key, int row, int col) {		
+		if (key == 13 || key == 10) return col; // Don't insert \n or \r
+		if (key == 127) return col; // Don't insert delete		
 		
 		/* 
 		 Every time the user enters a new key this method is called. Creating a completely new array
@@ -64,60 +47,77 @@ public class Data {
 		
 		try {
 			if (key == (char) VK.EMPTY_LINE.getCode()) {
-				char[] buffer = new char[1];
-				buffer[0] = key;
-				data.add(row-1, new String(buffer));
+				data.add(row-1, new String(createOneCharArr(key)));
 				updateAllLines();
 			} else if (isLineEmpty(row)) {
 				// Remove position from data array if it has an EMPTY_LINE code
 				// This will result in currentLine throwing a IndexOutOfBoundsException and handling the new insert like the first insert of the file
-				char[] buffer = new char[1];
-				buffer[0] = key;
-				
-				data.set(row-1, new String(buffer));
+				data.set(row-1, new String(createOneCharArr(key)));
 			} else {
-				char[] currentLine = data.get(row-1).toCharArray();
-				char[] buffer = new char[currentLine.length+1];
-				
-				for (int i = 0; i < buffer.length; i++) {
-					if (i < col-1) {
-						// The loop didn't reach the cursor position yet.
-						// Assign existing chars to the new arr (buffer).
-						buffer[i] = currentLine[i];
-					} else if (i == col-1) {
-						// The loop is at the cursor position.
-						// Add the new key to the buffer.
-						buffer[i] = key;
-					} else if (i > col-1)  {
-						// The loop is now after cursor position.
-						// Keep assigning existing chars to the buffer.
-						buffer[i] = currentLine[i-1];
-					}
-				}
+				char[] buffer = insertKeyToString(data.get(row-1), key, col);
 				
 				data.set(row-1, new String(buffer));
 			}
 		} catch (IndexOutOfBoundsException e) {
 			// Add EMPTY_LINE to the first position of data if the user wants to input an enter as their first line on the file
 			if (data.isEmpty() && row-1 == 1) {
-				char[] firstEmpty = new char[1];
-				firstEmpty[0] = (char) VK.EMPTY_LINE.getCode();
-				data.add(0, new String(firstEmpty));
+				data.add(0, new String(createOneCharArr((char) VK.EMPTY_LINE.getCode())));
 				updateLine(0);
 			}
 			
-			char[] buffer = new char[1];
-			buffer[0] = key;
-			
-			data.add(row-1, new String(buffer));
+			data.add(row-1, new String(createOneCharArr(key)));
 		}
 
-		// Don't increment cursor position if the char inserted is EMPTY_LINE
-		if (key != (char) VK.EMPTY_LINE.getCode()) {			
-			Screen.cursor.incrementCol(1);
-			//Screen.cursor.updatePosition();
-		}
 		updateLine(row-1);
+		
+		// Don't increment cursor position if the char inserted is EMPTY_LINE
+		if (key == (char) VK.EMPTY_LINE.getCode()) return col;
+		else return col+1;
+	}	
+
+	/**
+	 * @return Updated column position.
+	*/ 	
+	protected int insertCommand(char key, int col) {
+		if (key < 0) return col; // Don't insert virtual key binds
+		if (key == 13 || key == 10) return col; // Don't insert \n or \r
+		if (key == 127) return col; // Don't insert delete
+		if (key == 58) return col; // Don't insert :
+		
+		try {
+			char[] buffer = insertKeyToString(commandData, key, col-1);
+			
+			commandData = new String(buffer);
+			updateCommandModeLine();			
+			return col+1;
+		} catch (Exception e) {
+			Alerts.newCustomAlert("Error inserting command data", e.toString(), Colors.RED, null);
+			Screen.cursor.setExCol(1);
+			return 1;
+		}
+	}
+	
+	private char[] insertKeyToString(String oldString, char key, int position) {
+		char[] currentLine = oldString.toCharArray();
+		char[] buffer = new char[currentLine.length+1];
+		
+		for (int i = 0; i < buffer.length; i++) {
+			if (i < position-1) {
+				// The loop didn't reach the cursor position yet.
+				// Assign existing chars to the new arr (buffer).
+				buffer[i] = currentLine[i];
+			} else if (i == position-1) {
+				// The loop is at the cursor position.
+				// Add the new key to the buffer.
+				buffer[i] = key;
+			} else if (i > position-1) {
+				// The loop is now after cursor position.
+				// Keep assigning existing chars to the buffer.
+				buffer[i] = currentLine[i-1];
+			}
+		}
+		
+		return buffer;
 	}
 	
 	protected void handleEnterBetweenText(int row, int col) {
@@ -136,42 +136,7 @@ public class Data {
 		// Update prints from screen
 		updateAllLines();
 	}
-	
-	protected void insertCommand(char key, int col) {
-		if (key < 0) return; // Don't insert virtual key binds
-		if (key == 13 || key == 10) return; // Don't insert \n or \r
-		if (key == 127) return; // Don't insert delete
-		if (key == 58) return; // Don't insert :
-		
-		try {
-			char[] currentLine = commandData.toCharArray();
-			char[] buffer = new char[currentLine.length+1];
-			
-			for (int i = 0; i < buffer.length; i++) {
-				if (i < col-2) {
-					// The loop didn't reach the cursor position yet.
-					// Assign existing chars to the new arr (buffer).
-					buffer[i] = currentLine[i];
-				} else if (i == col-2) {
-					// The loop is at the cursor position.
-					// Add the new key to the buffer.
-					buffer[i] = key;
-				} else if (i > col-2) {
-					// The loop is now after cursor position.
-					// Keep assigning existing chars to the buffer.
-					buffer[i] = currentLine[i-1];
-				}
-			}
-			
-			commandData = new String(buffer);
-			updateCommandModeLine();
-			Screen.cursor.incrementExCol(1);
-		} catch (Exception e) {
-			Alerts.newCustomAlert("Error inserting command data", e.toString(), Colors.RED, null);
-			Screen.cursor.setExCol(1);
-		}
-	}
-	
+
 	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
 		if (data.isEmpty()) return;
 		if (row == 1 && col == 1) return;
@@ -244,7 +209,7 @@ public class Data {
 			if (file == null || file.exists() == false) Alerts.FILE_DONT_SPECIFIED.newAlert();
 			else writeFile();
 		}
-	}
+	}		
 	
 	private void writeFile() {
 		try {
@@ -266,9 +231,30 @@ public class Data {
 		} catch (Exception e) {
 			Alerts.newCustomAlert("Error writing file", e.toString(), Colors.RED, null);
 		}		
+	}	
+	
+	protected void readPrint(Path path) {
+		this.path = path;
+		this.file = new File(path.toString());
+		
+		if (Screen.canHandleFiles()) { 
+			try (Stream<String> stream = Files.lines(this.path)) {
+				data = stream.collect(Collectors.toCollection(ArrayList::new));
+				printFile();				
+			} catch (FileNotFoundException e) {
+				Alerts.FILE_NOT_FOUND.newAlert();
+			} catch (NoSuchFileException e) {
+				Alerts.FILE_NOT_FOUND.newAlert();
+			} catch (Exception e) {
+				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
+			}	
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}
 	}
 	
 	private void printFile() {
+		ANSI.saveCursorPosition();
 		ANSI.moveCursorHome();
 		
 		for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
@@ -281,13 +267,19 @@ public class Data {
 			System.out.print("\r\n");
 		}
 		
-		Screen.cursor.moveSet(1, 1);
+		ANSI.restoreCursorPosition();
 	}
 	
 	private boolean isLineEmpty(int line) {
 		if (line-1 < 0) return true;
 		else if (data.get(line-1).length() == 0) return true;
 		else return data.get(line-1).toCharArray()[0] == (char) VK.EMPTY_LINE.getCode();
+	}
+		
+	private char[] createOneCharArr(char key) {
+		char[] buffer = new char[1];
+		buffer[0] = key;
+		return buffer;
 	}
 	
 	private void updateLine(int line) {

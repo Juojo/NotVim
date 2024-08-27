@@ -118,7 +118,8 @@ public abstract class Screen {
 			} else if (charCode == 127) { // Delete
 				data.delete(cursor.getRow(), cursor.getCol(), cursor);
 			} else if (charCode >= 0) { // Not VK
-				data.insert((char) charCode, cursor.getRow(), cursor.getCol());
+				int updatedCol = data.insert((char) charCode, cursor.getRow(), cursor.getCol());
+				cursor.moveSet(updatedCol, cursor.getRow());
 			}
 			
 			break;
@@ -136,7 +137,8 @@ public abstract class Screen {
 				} else {
 					if (charCode != 13 && charCode != 10) {
 						if (charCode > 0) {
-							data.insertCommand((char) charCode, cursor.getExCol());
+							int updatedExCol = data.insertCommand((char) charCode, cursor.getExCol());
+							cursor.setExCol(updatedExCol);
 						}						
 					} else {
 						cleanRow();
