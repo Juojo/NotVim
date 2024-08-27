@@ -73,6 +73,8 @@ public abstract class Screen {
 			}
 		}
 		
+		if (charCode == 9) charCode = 0; // Disable TAB
+		
 		handleCustomBinds(mode, charCode);
 		if (canHandleFiles) cursor.handleMovementKeys(charCode, data);
 	}
