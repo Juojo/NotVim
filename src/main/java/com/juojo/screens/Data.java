@@ -136,7 +136,7 @@ public class Data {
 		updateAllLines();
 	}
 
-	protected void delete(int row, int col, com.juojo.screens.cursor.Cursor cursor) {
+	protected void delete(int row, int col, com.juojo.screens.Cursor cursor) {
 		if (data.isEmpty()) return;
 		if (row == 1 && col == 1) return;
 		

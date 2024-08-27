@@ -1,7 +1,5 @@
-package com.juojo.screens.cursor;
+package com.juojo.screens;
 
-import com.juojo.screens.Data;
-import com.juojo.screens.Mode;
 import com.juojo.util.ANSI;
 import com.juojo.virtualkeymapping.VK;
 
@@ -16,13 +14,13 @@ public class Cursor {
 	private Mode mode;
 	private int terminalRow, terminalCol;
 	
-	public Cursor(int terminalRow, int terminalCol, Mode mode) {
+	protected Cursor(int terminalRow, int terminalCol, Mode mode) {
 		this.mode = mode;
 		this.terminalRow = terminalRow;
 		this.terminalCol = terminalCol;
 	}
 	
-	public void handleMovementKeys(int charCode, Data data) {
+	protected void handleMovementKeys(int charCode, Data data) {
 		int amountOfRows = data.getAmountOfRows();
 		
 		if (mode != Mode.EX_MODE) {

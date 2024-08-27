@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import com.juojo.commands.CreateCommandInstance;
-import com.juojo.screens.cursor.Cursor;
 import com.juojo.util.ANSI;
 import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
@@ -17,9 +16,9 @@ public abstract class Screen {
 	private boolean canHandleFiles = false;
 	
 	private boolean loop = false;	
-	protected Mode mode;	
+	private Mode mode;
 	
-	protected Data data;
+	private Data data;
 	private Cursor cursor;
 		
 	protected int charCode;
