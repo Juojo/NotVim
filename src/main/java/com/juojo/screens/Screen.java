@@ -39,7 +39,7 @@ public abstract class Screen {
 		
 		if (canHandleFiles) data = new Data();
 		
-		cursor = new Cursor(this);
+		cursor = new Cursor(terminalRow, terminalCol, mode);
 		ANSI.moveCursorHome();
 	}
 	

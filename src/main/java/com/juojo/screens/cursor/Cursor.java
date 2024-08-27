@@ -2,7 +2,6 @@ package com.juojo.screens.cursor;
 
 import com.juojo.screens.Data;
 import com.juojo.screens.Mode;
-import com.juojo.screens.Screen;
 import com.juojo.util.ANSI;
 import com.juojo.virtualkeymapping.VK;
 
@@ -12,17 +11,15 @@ public class Cursor {
 	private int row = 1;
 	private int exCol = 1;
 	
-	private int maxCol = 1;
+	private int maxColMem = 1;
 	
-	private Screen screen;
 	private Mode mode;
 	private int terminalRow, terminalCol;
 	
-	public Cursor(Screen screen) {
-		this.screen = screen;
-		mode = screen.getCurrentMode();
-		terminalRow = screen.getTerminalRow();
-		terminalCol = screen.getTerminalCol();
+	public Cursor(int terminalRow, int terminalCol, Mode mode) {
+		this.mode = mode;
+		this.terminalRow = terminalRow;
+		this.terminalCol = terminalCol;
 	}
 	
 	public void handleMovementKeys(int charCode, Data data) {
@@ -49,7 +46,7 @@ public class Cursor {
 				}
 				
 				// reset maxCol if the column position is changed
-				maxCol = col;
+				maxColMem = col;
 			} else if (charCode == VK.ARROW_LEFT.getCode()) {
 				// ARROW LEFT
 				if (col == 1 && row != 1) {
@@ -60,10 +57,10 @@ public class Cursor {
 				}
 				
 				// reset maxCol if the column position is changed
-				maxCol = col;
+				maxColMem = col;
 			}
-			
-			ANSI.moveCursor(row, col); // row, col
+
+			ANSI.moveCursor(row, col);
 		} else {
 			if (charCode == VK.ARROW_RIGHT.getCode() && exCol < terminalCol) {
 				if (exCol <= data.getCommandRowLenght()+1) {
@@ -79,21 +76,17 @@ public class Cursor {
 	}
 	
 	private void handleColMemory(int rowLenght) {		
-		// Assign maxCol
-		if (col > maxCol) {
-			maxCol = col;
+		// Assign maxColMem
+		if (col > maxColMem) {
+			maxColMem = col;
 		}
 		
-		// Move cursor to maxCol
-		if (maxCol > rowLenght) {			
+		// Move cursor to maxColMem
+		if (maxColMem > rowLenght) {			
 			col = rowLenght+1;
 		} else {
-			col = maxCol; 
+			col = maxColMem; 
 		}
-	}
-
-	public void updatePosition() {
-		ANSI.moveCursor(this.row, this.col);
 	}
 	
 	// Move and set cursor
@@ -133,16 +126,22 @@ public class Cursor {
 	
 	// Increment row and col
 	
-	public void incrementCol(int amount) {
+	public void incrementSetCol(int amount) {
 		col += amount;
+		
+		ANSI.moveCursor(this.row, this.col);
 	}
 	
-	public void incrementRow(int amount) {
+	public void incrementSetRow(int amount) {
 		row += amount;
+		
+		ANSI.moveCursor(this.row, this.col);
 	}
 	
-	public void incrementExCol(int amount) {
+	public void incrementSetExCol(int amount) {
 		exCol += amount;
+		
+		ANSI.moveCursor(this.terminalRow, this.exCol);
 	}
 	
 	// Get row and col
@@ -165,11 +164,11 @@ public class Cursor {
 		mode = newMode;
 	}
 	
-	public void updateTerminalRow(int newTerminalRow) {
+	public void setTerminalRow(int newTerminalRow) {
 		terminalRow = newTerminalRow;
 	}
 	
-	public void updateTerminalCol(int newTerminalCol) {
+	public void setTerminalCol(int newTerminalCol) {
 		terminalCol = newTerminalCol;
 	}
 	
