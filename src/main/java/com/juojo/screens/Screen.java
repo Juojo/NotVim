@@ -184,7 +184,7 @@ public abstract class Screen {
 	}
 	
 	protected void printStatusBar() {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		
 		// Move cursor to status-bar position
 		ANSI.moveCursor(terminalRow+1-statusBarHeight, 0);
@@ -215,7 +215,7 @@ public abstract class Screen {
 			System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		}
 
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 	
 	private void printHomeScreen() {

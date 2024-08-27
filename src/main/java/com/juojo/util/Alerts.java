@@ -20,21 +20,21 @@ public enum Alerts {
 	}
 	
 	public void newAlert() {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		ANSI.moveCursor(Util.getTerminalRow(), 0);
 		
 		printAlert(this.name, this.desc, this.fg, this.bg);
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 	
 	public static void newCustomAlert(String name, String desc, Colors fg, Colors bg) {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		ANSI.moveCursor(Util.getTerminalRow(), 0);
 		
 		printAlert(name, desc, fg, bg);
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 	
 	private static void printAlert(String name, String desc, Colors fg, Colors bg) {

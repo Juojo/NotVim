@@ -23,18 +23,30 @@ public abstract class ANSI {
 		
 	}
 	
-	public static void saveCursorPosition() {
+	public static void saveHideCursorPosition() {
 		// Save cursor position in DEC and SCO
 		System.out.print("\033 7\033[s");		
+		// Hide the cursor
+		hideCursor();
 	}
 	
-	public static void restoreCursorPosition() {
+	public static void restoreShowCursorPosition() {
 		// Restore original cursor position in DEC and SCO
 		System.out.print("\033 8\033[u");
+		// Hide the cursor
+		showCursor();
 	}
 
 	public static void moveCursorDown(int amountOfLines) {
 		System.out.printf("\033[%dB", amountOfLines);		
+	}
+	
+	public static void hideCursor() {
+		System.out.print("\033[?25l");
+	}
+	
+	public static void showCursor() {
+		System.out.print("\033[?25h");
 	}
 	
 }

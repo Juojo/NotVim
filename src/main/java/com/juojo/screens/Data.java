@@ -249,7 +249,7 @@ public class Data {
 	}
 	
 	private void printFile() {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		ANSI.moveCursorHome();
 		
 		for (int i = 0; i < Util.getTerminalRow()-Util.getStatusBarHeight(); i++) {
@@ -262,7 +262,7 @@ public class Data {
 			System.out.print("\r\n");
 		}
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 	
 	private boolean isLineEmpty(int line) {
@@ -278,17 +278,17 @@ public class Data {
 	}
 	
 	private void updateLine(int line) {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		
 		ANSI.moveCursor(line+1, 1);
 		if (!isLineEmpty(line+1)) System.out.print(data.get(line));
 		ANSI.deleteEndOfRow();
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}	
 	
 	private void updateAllLines() {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		
 		ANSI.moveCursorHome();
 		
@@ -304,17 +304,17 @@ public class Data {
 		ANSI.deleteEndOfRow();
 		Util.printNotWritableRowSymbol();
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 		
 	protected void updateCommandModeLine() {
-		ANSI.saveCursorPosition();
+		ANSI.saveHideCursorPosition();
 		
 		ANSI.moveCursor(Main.rows, 1);
 		System.out.print(":" + commandData);
 		ANSI.deleteEndOfRow();
 		
-		ANSI.restoreCursorPosition();
+		ANSI.restoreShowCursorPosition();
 	}
 	
 	public int getRowLenght(int row) {
