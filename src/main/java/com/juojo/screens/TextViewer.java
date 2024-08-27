@@ -14,10 +14,8 @@ public class TextViewer extends Screen {
 	
 	public TextViewer(int row, int col, String[] args) {
 		super(row, col, canHandleFiles);
-		ANSI.clearScreen();
-	
-		printHomeScreen();
-		super.printStatusBar();
+		
+		newFile();
 		
 		if (args.length != 0) {
 			super.changeMode(Mode.NORMAL_MODE);
@@ -32,13 +30,6 @@ public class TextViewer extends Screen {
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 			}
-		}
-	}
-
-	private void printHomeScreen() {
-		for (int i = 0; i < Util.getTerminalRow()-Util.getStatusBarHeight(); i++) {
-			Util.printNotWritableRowSymbol();
-			System.out.print("\r\n");
 		}
 	}
 

@@ -34,8 +34,6 @@ public abstract class Screen {
 		this.loop = true;		
 		mode = Mode.INSERT_MODE;
 		
-		if (canHandleFiles) data = new Data();
-		
 		cursor = new Cursor(terminalRow, terminalCol, mode);
 		ANSI.moveCursorHome();
 	}
@@ -218,17 +216,45 @@ public abstract class Screen {
 		ANSI.restoreCursorPosition();
 	}
 	
+	private void printHomeScreen() {
+		for (int i = 0; i < Util.getTerminalRow()-Util.getStatusBarHeight(); i++) {
+			Util.printNotWritableRowSymbol();
+			System.out.print("\r\n");
+		}
+	}
+	
 	public void readPrintData(Path path) {
-		cursor.moveSet(1, 1);
-		data = new Data();
-		data.readPrint(path);
+		if (canHandleFiles) {
+			cursor.moveSet(1, 1);
+			data = new Data();
+			data.readPrint(path);
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}		
 	}
 
 	public void writeData(String fileName) {
-		if (fileName == null) data.write(null);
-		else data.write(Path.of("./"+fileName));		
+		if (canHandleFiles) {
+			if (fileName == null) data.write(null);
+			else data.write(Path.of("./"+fileName));
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}
 	}
-
+	
+	public void newFile() {
+		if (canHandleFiles) {
+			ANSI.clearScreen();
+			cursor.moveSet(1, 1);
+			printHomeScreen();
+			printStatusBar();
+			
+			data = new Data();
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}
+	}	
+	
 	protected boolean getLoop() {
 		return loop;
 	}

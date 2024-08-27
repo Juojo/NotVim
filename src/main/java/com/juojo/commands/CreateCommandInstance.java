@@ -37,6 +37,7 @@ public class CreateCommandInstance {
 		if (command.equals("q") || command.equals("quit")) new Quit(executedFromScreen);
 		else if (command.equals("open") && executedFromScreen.canHandleFiles()) new Open(args, executedFromScreen);
 		else if (command.equals("w") || command.equals("write") && executedFromScreen.canHandleFiles()) new Write(args, executedFromScreen);
+		else if (command.equals("n") || command.equals("new") && executedFromScreen.canHandleFiles()) new NewFile(executedFromScreen);
 		else Alerts.COMMAND_NOT_FOUND.newAlert();
 	}
 
