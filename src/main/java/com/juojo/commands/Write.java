@@ -1,6 +1,7 @@
 package com.juojo.commands;
 
 import com.juojo.screens.Screen;
+import com.juojo.util.Alerts;
 
 public class Write extends Command {
 
@@ -15,7 +16,11 @@ public class Write extends Command {
 		this.args = args;
 		this.executedFromScreen = executedFromScreen;
 		
-		executeCommand();
+		if (executedFromScreen.canHandleFiles()) {
+			executeCommand();
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}
 	}
 	
 	@Override

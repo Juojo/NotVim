@@ -18,7 +18,11 @@ public class Open extends Command {
 		this.args = args;
 		this.executedFromScreen = executedFromScreen;
 		
-		executeCommand();
+		if (executedFromScreen.canHandleFiles()) {
+			executeCommand();
+		} else {
+			Alerts.CANT_OPEN_FILE.newAlert();
+		}		
 	}
 
 	@Override

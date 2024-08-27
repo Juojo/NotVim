@@ -33,32 +33,11 @@ public class CreateCommandInstance {
 			}
 		}
 		
-		// Commands for all screens
-		if (command.equals("q") || command.equals("quit"))
-			new Quit(executedFromScreen);
-		else if (command.equals("open") && executedFromScreen.canHandleFiles())
-			new Open(args, executedFromScreen);
-		else if (command.equals("w") || command.equals("write") && executedFromScreen.canHandleFiles())
-			new Write(args, executedFromScreen);
-		else {
-			// FIX THIS
-			if (executedFromScreen.canHandleFiles()) 
-				Alerts.COMMAND_NOT_FOUND.newAlert();
-			else
-				Alerts.CANT_OPEN_FILE.newAlert();
-			
-		}
-		
-		
-//		// Commands for screens capable of handling files
-//		if (executedFromScreen.canHandleFiles()) {
-//			if (command.equals("open")) new Open(args, executedFromScreen);
-//			else if (command.equals("w") || command.equals("write")) new Write(args, executedFromScreen);
-//			//else if (command.equals("new")) new New();
-//			else Alerts.COMMAND_NOT_FOUND.newAlert();
-//		} else {
-//			Alerts.CANT_OPEN_FILE.newAlert();
-//		}
+		// Create command object
+		if (command.equals("q") || command.equals("quit")) new Quit(executedFromScreen);
+		else if (command.equals("open") && executedFromScreen.canHandleFiles()) new Open(args, executedFromScreen);
+		else if (command.equals("w") || command.equals("write") && executedFromScreen.canHandleFiles()) new Write(args, executedFromScreen);
+		else Alerts.COMMAND_NOT_FOUND.newAlert();
 	}
 
 	private void initArray(String[] arr) {
