@@ -1,5 +1,6 @@
 testFile
 largeTestFile.md
+changes
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
