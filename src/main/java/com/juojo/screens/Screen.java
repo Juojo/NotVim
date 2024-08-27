@@ -93,6 +93,7 @@ public abstract class Screen {
 				// Restart command input field
 				data.clearCommandData();
 				changeMode(Mode.EX_MODE);
+				cursor.setExCol(2);	
 			}
 			
 			// u -> undo
@@ -135,7 +136,7 @@ public abstract class Screen {
 							cursor.setExCol(updatedExCol);
 						}
 					} else { // If enter was pressed
-						cursor.setExCol(1);
+						cursor.setExCol(2);
 						ANSI.deleteEndOfRow();
 
 						// Call the command that matches the input 
@@ -175,8 +176,6 @@ public abstract class Screen {
 		if (mode == Mode.EX_MODE) {
 			// Set cursor to last row
 			ANSI.moveCursor(terminalRow, 0);
-			// Set column used for EX_MODE
-			cursor.setExCol(2);
  
 			data.updateCommandModeLine(); // Not ideal, consequence of #10 -> https://github.com/Juojo/NotVim/issues/10
 		} else {
