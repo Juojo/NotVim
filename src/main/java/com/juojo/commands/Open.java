@@ -2,13 +2,13 @@ package com.juojo.commands;
 
 import java.nio.file.Path;
 
-import com.juojo.screens.Data;
 import com.juojo.screens.Screen;
+import com.juojo.util.Alerts;
 
 public class Open extends Command {
 
 	private static final String name = "Open";
-	private static final String desc = "Open test file.";
+	private static final String desc = "Open files.";
 	
 	private String[] args;
 	private Screen executedFromScreen;
@@ -23,14 +23,12 @@ public class Open extends Command {
 
 	@Override
 	protected void executeCommand() {
-		Path path;
-		
 		if (args[0] == null) {
-			path = Path.of("testFile");
-		} else {
-			path = Path.of(args[0]);
+			Alerts.FILE_DONT_SPECIFIED.newAlert();
+			return;
 		}
 		
+		Path path = Path.of(args[0]);
 		executedFromScreen.readPrintData(path);
 	}
 

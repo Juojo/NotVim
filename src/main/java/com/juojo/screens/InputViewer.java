@@ -7,6 +7,7 @@ import com.juojo.util.Alerts;
 import com.juojo.util.Colors;
 import com.juojo.util.Util;
 
+// Only used for development, I should probably delete this.
 public class InputViewer extends Screen {
 
 	private static boolean canHandleFiles = false;
@@ -22,7 +23,6 @@ public class InputViewer extends Screen {
 				super.handleKey();
 			} catch (IOException e) {
 				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
-				//e.printStackTrace();
 			}
 			
 			printChar();

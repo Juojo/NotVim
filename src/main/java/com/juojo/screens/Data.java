@@ -92,7 +92,6 @@ public class Data {
 			return col+1;
 		} catch (Exception e) {
 			Alerts.newCustomAlert("Error inserting command data", e.toString(), Colors.RED, null);
-			Screen.cursor.setExCol(1);
 			return 1;
 		}
 	}
@@ -172,7 +171,7 @@ public class Data {
 		// Clear data if the only value stored is EMPTY_LINE
 		if (data.size() == 1 && isLineEmpty(1)) {
 			data.clear();
-			System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+			Util.printNotWritableRowSymbol();
 		}
 	}
 	
@@ -237,19 +236,15 @@ public class Data {
 		this.path = path;
 		this.file = new File(path.toString());
 		
-		if (Screen.canHandleFiles()) { 
-			try (Stream<String> stream = Files.lines(this.path)) {
-				data = stream.collect(Collectors.toCollection(ArrayList::new));
-				printFile();				
-			} catch (FileNotFoundException e) {
-				Alerts.FILE_NOT_FOUND.newAlert();
-			} catch (NoSuchFileException e) {
-				Alerts.FILE_NOT_FOUND.newAlert();
-			} catch (Exception e) {
-				Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
-			}	
-		} else {
-			Alerts.CANT_OPEN_FILE.newAlert();
+		try (Stream<String> stream = Files.lines(this.path)) {
+			data = stream.collect(Collectors.toCollection(ArrayList::new));
+			printFile();				
+		} catch (FileNotFoundException e) {
+			Alerts.FILE_NOT_FOUND.newAlert();
+		} catch (NoSuchFileException e) {
+			Alerts.FILE_NOT_FOUND.newAlert();
+		} catch (Exception e) {
+			Alerts.newCustomAlert("Error", e.toString(), Colors.RED, null);
 		}
 	}
 	
@@ -257,9 +252,9 @@ public class Data {
 		ANSI.saveCursorPosition();
 		ANSI.moveCursorHome();
 		
-		for (int i = 0; i < Screen.getTerminalRow()-Screen.getStatusHeight(); i++) {
+		for (int i = 0; i < Util.getTerminalRow()-Util.getStatusBarHeight(); i++) {
 			if (i >= data.size()) {
-				System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+				Util.printNotWritableRowSymbol();
 			} else {
 				System.out.print(data.get(i));
 			}
@@ -307,7 +302,7 @@ public class Data {
 		// Delete last line + 1 
 		ANSI.moveCursorToColumn(1);
 		ANSI.deleteEndOfRow();
-		System.out.print(Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+		Util.printNotWritableRowSymbol();
 		
 		ANSI.restoreCursorPosition();
 	}

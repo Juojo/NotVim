@@ -15,8 +15,7 @@ public abstract class ANSI {
 	}
 
 	public static void moveCursorToColumn(int position) {
-		System.out.printf("\033[%dG", position);
-		
+		System.out.printf("\033[%dG", position);		
 	}
 
 	public static void deleteEndOfRow() {
@@ -35,8 +34,7 @@ public abstract class ANSI {
 	}
 
 	public static void moveCursorDown(int amountOfLines) {
-		System.out.printf("\033[%dB", amountOfLines);
-		
+		System.out.printf("\033[%dB", amountOfLines);		
 	}
 	
 }

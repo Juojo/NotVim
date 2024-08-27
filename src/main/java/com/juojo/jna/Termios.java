@@ -31,7 +31,5 @@ public class Termios extends Structure {
 		return "Termios [c_iflag=" + c_iflag + ", c_oflag=" + c_oflag + ", c_cflag=" + c_cflag + ", c_lflag=" + c_lflag
 				+ ", c_cc=" + Arrays.toString(c_cc) + "]";
 	}
-    
-    
-    
+
 }

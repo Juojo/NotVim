@@ -9,7 +9,7 @@ public class Cursor {
 
 	private int col = 1;
 	private int row = 1;
-	private int exCol = 1;
+	private int exCol = 2;
 	
 	private int maxColMem = 1;
 	
@@ -45,7 +45,7 @@ public class Cursor {
 					if (col <= data.getRowLenght(row)) col++;
 				}
 				
-				// reset maxCol if the column position is changed
+				// reset maxColMem if the column position is changed
 				maxColMem = col;
 			} else if (charCode == VK.ARROW_LEFT.getCode()) {
 				// ARROW LEFT
@@ -56,7 +56,7 @@ public class Cursor {
 					col--;
 				}
 				
-				// reset maxCol if the column position is changed
+				// reset maxColMem if the column position is changed
 				maxColMem = col;
 			}
 

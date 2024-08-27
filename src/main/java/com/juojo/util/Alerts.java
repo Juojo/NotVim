@@ -1,14 +1,12 @@
 package com.juojo.util;
 
-import com.juojo.screens.Screen;
-
 public enum Alerts {
 
 	COMMAND_NOT_FOUND("Command not found", null, Colors.RED, Colors.MAGENTA),
 	FILE_NOT_FOUND("Can't open file", "The file was not found, this may be caused if you don't have the right permissions.", Colors.RED, Colors.MAGENTA),
 	NO_SUCH_FILE("Can't open file", "The file does not exists.", Colors.RED, Colors.MAGENTA),
 	CANT_OPEN_FILE("Can't open file", "The active screen isn't capable of handling files.", Colors.RED, Colors.MAGENTA),
-	FILE_DONT_SPECIFIED("The file name hasn't been specified or it was deleted", "Please provide a file name when calling 'write' command", Colors.RED, Colors.MAGENTA);
+	FILE_DONT_SPECIFIED("The file name hasn't been specified or it was deleted", "Please provide a file name when calling the command", Colors.RED, Colors.MAGENTA);
 	
 	private String name, desc;
 	private Colors fg, bg;
@@ -23,7 +21,7 @@ public enum Alerts {
 	
 	public void newAlert() {
 		ANSI.saveCursorPosition();
-		ANSI.moveCursor(Screen.getTerminalRow(), 0);
+		ANSI.moveCursor(Util.getTerminalRow(), 0);
 		
 		printAlert(this.name, this.desc, this.fg, this.bg);
 		
@@ -32,7 +30,7 @@ public enum Alerts {
 	
 	public static void newCustomAlert(String name, String desc, Colors fg, Colors bg) {
 		ANSI.saveCursorPosition();
-		ANSI.moveCursor(Screen.getTerminalRow(), 0);
+		ANSI.moveCursor(Util.getTerminalRow(), 0);
 		
 		printAlert(name, desc, fg, bg);
 		

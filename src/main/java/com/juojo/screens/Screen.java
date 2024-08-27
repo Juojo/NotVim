@@ -2,8 +2,6 @@ package com.juojo.screens;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.juojo.commands.CreateCommandInstance;
 import com.juojo.screens.cursor.Cursor;
@@ -14,27 +12,27 @@ import com.juojo.util.Util;
 import com.juojo.virtualkeymapping.VK;
 
 public abstract class Screen {
-
 	
-	private static int terminalRow, terminalCol;
-	private static int statusHeight = 2;
-	private static boolean loop = false;
-	private static boolean canHandleFiles = false;
+	private int terminalRow, terminalCol;
+	private boolean canHandleFiles = false;
 	
-	public static Cursor cursor;
+	private boolean loop = false;	
+	protected Mode mode;	
+	
 	protected Data data;
-	
+	private Cursor cursor;
+		
 	protected int charCode;
 	
-	protected Mode mode;
+	private int statusBarHeight = 2;
 	
-//	private List<Integer> charCodeList = new ArrayList<>(); // Array list for commands from EX_MODE
-//	private String userInput = "";
-	
-	protected Screen(int row, int col, boolean canHandleFiles) {
-		resizeScreen(row, col);
-		this.loop = true;
+	protected Screen(int terminalRow, int terminalCol, boolean canHandleFiles) {
+		this.terminalRow = terminalRow;
+		this.terminalCol = terminalCol;
 		this.canHandleFiles = canHandleFiles;
+		Util.setStatusBarHeight(statusBarHeight);
+		
+		this.loop = true;		
 		mode = Mode.INSERT_MODE;
 		
 		if (canHandleFiles) data = new Data();
@@ -82,12 +80,7 @@ public abstract class Screen {
 		if (canHandleFiles) cursor.handleMovementKeys(charCode, data);
 	}
 
-	private void handleCustomBinds(Mode actualMode, int charCode) {
-		// Handle custom binds for all modes
-		if (charCode == 13 || charCode == 10) { // Enter
-			System.out.print("");
-		}
-		
+	private void handleCustomBinds(Mode actualMode, int charCode) {		
 		// Handle custom binds for each mode
 		switch (actualMode) {
 		case NORMAL_MODE: {
@@ -97,15 +90,13 @@ public abstract class Screen {
 			} else if (charCode == 58) { // :
 				Alerts.setActiveAlertFalse();
 				
+				// Restart command input field
 				data.clearCommandData();
-				changeMode(Mode.EX_MODE);				
-				cursor.setExCol(2);
+				changeMode(Mode.EX_MODE);
 			}
 			
 			// u -> undo
-			// d -> delete word
-			
-			
+			// d -> delete word						
 			break;
 		}
 		case INSERT_MODE: {
@@ -127,23 +118,27 @@ public abstract class Screen {
 		case EX_MODE: {
 			
 			if (charCode != 27) {
-				if (charCode == 127) {
+				if (charCode == 127) { // Delete
 					cursor.setExCol(data.deleteCommand(cursor.getExCol()));
 				} else if (charCode == 58) { // :
+					// Restart command input field
 					data.clearCommandData();
 					data.updateCommandModeLine();
-					cursor.setExCol(2);
-					
+					cursor.setExCol(2);					
 				} else {
+					// If not enter
 					if (charCode != 13 && charCode != 10) {
+						// And not virtual key bind
 						if (charCode > 0) {
+							// Insert command and update cursor position
 							int updatedExCol = data.insertCommand((char) charCode, cursor.getExCol());
 							cursor.setExCol(updatedExCol);
-						}						
-					} else {
-						cleanRow();
+						}
+					} else { // If enter was pressed
 						cursor.setExCol(1);
+						ANSI.deleteEndOfRow();
 
+						// Call the command that matches the input 
 						new CreateCommandInstance(data.getCommandData(), this);
 						
 						changeMode(Mode.NORMAL_MODE);
@@ -164,47 +159,36 @@ public abstract class Screen {
 		
 	}
 
-	private String charCodeListToString(List<Integer> charCodeList) {
-		String output = "";
-		int listLenght = charCodeList.size();
-		
-		for (int i = 0; i < listLenght; i++) {
-			output += Character.toString(charCodeList.getFirst());
-			charCodeList.removeFirst();
-		}
-		
-		return output;
-	}
-
 	protected void changeMode(Mode mode) {
-		int currentCol = cursor.getCol();
-		int currentRow = cursor.getRow();
-		int currentExCol = cursor.getExCol();
+		if (this.mode == mode) return; // Don't change mode to the same mode
+
+		this.mode = mode;
+		cursor.updateMode(mode);
 		
-		if (this.mode != mode) {
-			this.mode = mode;
-			cursor.updateMode(mode);
-			
-			if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
-				Alerts.setActiveAlertFalse();
-				printStatusBar(false, currentCol, currentRow, currentExCol);
-			} else {
-				printStatusBar(true, currentCol, currentRow, currentExCol);
-			}
-				
-			if (mode == Mode.EX_MODE) {
-				ANSI.moveCursor(terminalRow, 0);
-				data.updateCommandModeLine();
-			} else {
-				cursor.moveSet(currentCol, currentRow);
-			}
+		if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
+			Alerts.setActiveAlertFalse();
 		}
 		
+		printStatusBar();
 		
+		// Move cursor to the position required for each mode 
+		if (mode == Mode.EX_MODE) {
+			// Set cursor to last row
+			ANSI.moveCursor(terminalRow, 0);
+			// Set column used for EX_MODE
+			cursor.setExCol(2);
+ 
+			data.updateCommandModeLine(); // Not ideal, consequence of #10 -> https://github.com/Juojo/NotVim/issues/10
+		} else {
+			cursor.moveSet(cursor.getCol(), cursor.getRow());
+		}
 	}
 	
-	protected void printStatusBar(boolean modeOnTitle, int currentX, int currentY, int currentExPosX) {
-		ANSI.moveCursor(terminalRow+1-statusHeight, 0); // Move cursor to status-bar position
+	protected void printStatusBar() {
+		ANSI.saveCursorPosition();
+		
+		// Move cursor to status-bar position
+		ANSI.moveCursor(terminalRow+1-statusBarHeight, 0);
 
 		// Print status-bar
 		for (int i = 0; i < terminalCol; i++) {
@@ -214,76 +198,29 @@ public abstract class Screen {
 
 		System.out.print(Util.returnColorString("NotVim text editor", Colors.WHITE, Colors.RED));
 		
-		if (modeOnTitle) { // Can replace this with if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE)
+		// Print mode on title if actual mode is:
+		if (mode == Mode.NORMAL_MODE || mode == Mode.EX_MODE) {
 			System.out.print(Util.returnColorString("  --  " + mode.getName() + "  --  ", Colors.BLUE, Colors.RED));
 		}
 
 		System.out.print("\r\n");
-		if (Alerts.getActiveAlert() == false) { // Don't clean last row if an alert is active
-			cleanRow();
+		
+		// Clean command row (last row) only if there aren't any alerts active
+		if (!Alerts.getActiveAlert()) {
+			ANSI.moveCursorToColumn(0);
+			ANSI.deleteEndOfRow();
 		}
 		
-		if (mode == Mode.INSERT_MODE) System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
-		
-		if (mode != Mode.EX_MODE) ANSI.moveCursor(currentY, currentX);
-		else ANSI.moveCursorToColumn(currentExPosX);
-	}
-	
-	private void resizeScreen(int row, int col) {
-		this.terminalRow = row;
-		this.terminalCol = col;
-	}
-
-	protected boolean getLoop() {
-		return loop;
-	}
-	
-	public static int getStatusHeight() {
-		return statusHeight;
-	}
-
-	public static void endLoop() {
-		loop = false;
-	}
-	
-	public static int getTerminalRow() {
-		return terminalRow;
-	}
-	
-	public int getTerminalCol() {
-		return terminalCol;
-	}
-	
-	public static boolean canHandleFiles() {
-		return canHandleFiles;
-	}
-	
-	private static void cleanRow() {
-		ANSI.moveCursorToColumn(0);
-		for (int i = 0; i < terminalCol; i++) {
-			System.out.print(" ");
+		// Print mode on command row if actual mode is:
+		if (mode == Mode.INSERT_MODE || mode == Mode.VISUAL_MODE) {
+			System.out.print(Util.returnColorString("-- ", Colors.WHITE, Colors.DEFAULT) + Util.returnColorString(mode.getName(), Colors.RED, Colors.DEFAULT) + Util.returnColorString(" --", Colors.WHITE, Colors.DEFAULT));
 		}
-		ANSI.moveCursorToColumn(0);
-	}
 
-	public static void cleanTextArea() {
-		int currentCol = cursor.getCol();
-		int currentRow = cursor.getRow();
-		
-		ANSI.moveCursor(1, 1);
-		for (int i = 0; i < terminalRow-statusHeight+1; i++) {
-			cleanRow();
-			ANSI.moveCursor(i+1, 0);
-		}
-		
-		ANSI.moveCursor(currentRow, currentCol); // Restore original cursor position
+		ANSI.restoreCursorPosition();
 	}
-
-	public Mode getCurrentMode() {
-		return mode;
-	}
-
+	
 	public void readPrintData(Path path) {
+		cursor.moveSet(1, 1);
 		data = new Data();
 		data.readPrint(path);
 	}
@@ -292,7 +229,18 @@ public abstract class Screen {
 		if (fileName == null) data.write(null);
 		else data.write(Path.of("./"+fileName));		
 	}
+
+	protected boolean getLoop() {
+		return loop;
+	}
+
+	public void endLoop() {
+		loop = false;
+	}
 	
-	//System.out.println("\033[4;44;31mHola\033[0m");
+	public boolean canHandleFiles() {
+		return canHandleFiles;
+	}
+	
 }
  

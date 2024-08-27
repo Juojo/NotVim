@@ -1,7 +1,6 @@
 package com.juojo.screens;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import com.juojo.commands.CreateCommandInstance;
 import com.juojo.util.ANSI;
@@ -17,8 +16,8 @@ public class TextViewer extends Screen {
 		super(row, col, canHandleFiles);
 		ANSI.clearScreen();
 	
-		printHomeScreen();		
-		super.printStatusBar(false, cursor.getCol(), cursor.getRow(), cursor.getExCol());
+		printHomeScreen();
+		super.printStatusBar();
 		
 		if (args.length != 0) {
 			super.changeMode(Mode.NORMAL_MODE);
@@ -37,8 +36,9 @@ public class TextViewer extends Screen {
 	}
 
 	private void printHomeScreen() {
-		for (int i = 0; i < super.getTerminalRow()-super.getStatusHeight(); i++) {
-			System.out.printf("%s\r\n", Util.returnColorString("~", Colors.BLUE, Colors.DEFAULT));
+		for (int i = 0; i < Util.getTerminalRow()-Util.getStatusBarHeight(); i++) {
+			Util.printNotWritableRowSymbol();
+			System.out.print("\r\n");
 		}
 	}
 

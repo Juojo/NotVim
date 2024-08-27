@@ -6,18 +6,19 @@ public class Quit extends Command {
 
 	private static final String name = "Quit";
 	private static final String desc = "Exit program.";
-	//private static final String[] options = {":q", ":quit"};
 	
-	protected Quit() {
+	private Screen executedFromScreen;
+	
+	protected Quit(Screen executedFromScreen) {
 		super(name, desc);
+		this.executedFromScreen = executedFromScreen;
 		
 		executeCommand();
 	}
 	
 	@Override
 	protected void executeCommand() {
-		//System.out.print("Command " + name + " executed succesfully."); // Replace this with new Alert();
-		Screen.endLoop();
+		executedFromScreen.endLoop();
 	}
 
 }

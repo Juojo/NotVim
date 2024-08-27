@@ -5,6 +5,7 @@ import com.juojo.jna.UseC;
 import com.juojo.screens.Screen;
 import com.juojo.screens.TextViewer;
 import com.juojo.util.ANSI;
+import com.juojo.util.Util;
 
 public class Main {
 	
@@ -17,6 +18,7 @@ public class Main {
 	public static Screen textViewer;
 	
     public static void main(String[] args) {
+    	// Disable raw mode if program crash (please don't crash)
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             C.disableRawMode();
         }));
@@ -24,7 +26,7 @@ public class Main {
     	C.enableRawMode();
     	setRowsAndColumns();
     	
-    	//inputViewer = new InputViewer(40, 30);
+    	// Instantiate the main Screen of the program
     	textViewer = new TextViewer(rows, columns, args);
     	
     	C.disableRawMode();
@@ -36,7 +38,9 @@ public class Main {
 		ioctl = C.getTermianlSize();
 		rows = ioctl.ws_row;
 		columns = ioctl.ws_col;
+		
+		Util.setTerminalRow(rows);
+		Util.setTerminalCol(columns);
 	}
-
-    
+	
 }

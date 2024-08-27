@@ -1,7 +1,5 @@
 package com.juojo.commands;
 
-import java.nio.file.Path;
-
 import com.juojo.screens.Screen;
 
 public class Write extends Command {
