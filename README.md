@@ -64,7 +64,7 @@ $ java --version
 
 ```bash
 #!/usr/bin/env bash
-java -jar ./not-vim-1.0.jar "$@" # Change the file name to match the NotVim version you are using.
+java -jar ~/.local/bin/not-vim-1.0.jar "$@" # Change the file name to match the NotVim version you are using.
 ```
 
 2. (skip if your system's $PATH is already configured) Add this line to your shell configuration file, commonly located at `~/.zshrc` or `~/.bashrc` (depending on your shell).
