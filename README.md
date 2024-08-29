@@ -1,8 +1,8 @@
 # NotVim
-NotVim is a fast way to edit text files. It works entirely on your terminal so it is very convinient for terminal-based workflows. The project was developed in Java and inspired by Vim.
+NotVim is a fast way to edit text files. It works entirely on your terminal, making it very convenient for terminal-based workflows. The project was developed in Java and inspired by Vim.
 
 # Why it was made
-The objective of this project was to create an entire text editor from the ground. This includes every aspect of it, from the way the cursor wraps arround the text to the logic of how files are loaded and written.
+The objective of this project was to create an entire text editor from the ground. This includes every aspect of it, from the way the cursor wraps around the text to the logic of how files are loaded and written.
 
 All the interfaces, such as the home screen or the error alerts, were made without using any framework. The program only uses **JNA library** to enter **raw mode** on the terminal, by using the native shared libraries required.
 <!-- Link to JNA -->
@@ -12,7 +12,7 @@ All the interfaces, such as the home screen or the error alerts, were made witho
 # How to use it
 NotVim has four different modes, each one is used to perform different actions in the editor.
 
-* ***Normal mode:*** Accessed by pressing the `ESC` key at any time. Use it to move the cursor trough the text and access other modes.
+* ***Normal mode:*** Accessed by pressing the `ESC` key at any time. Use it to move the cursor through the text and access other modes.
 
 * ***Insert mode:*** Used to insert text into a new or existing file. You can access it by pressing the letter `i` while in *normal mode*.
 
@@ -25,23 +25,32 @@ NotVim has four different modes, each one is used to perform different actions i
 > Example: `$ notvim path/to/file`
 
 # Features
-The program counts with all the basics features you will expect from a text editor. Including:
+The program counts with all the basic features you would expect from a text editor. Including:
 
-* The cursor can only move trough the text and reacts to user inputs, such as: inserting new characters, creating new lines and deleting lines.
+* The cursor can only move through the text and react to user inputs, such as: inserting new characters, creating new lines, and deleting lines.
 * The cursor has column memory. This means that if the user moves to a line that doesn't have enough text to maintain its previous column position, the cursor will move to the end of that line. If the cursor moves again to a new line and this time it has enough characters, it will restore its original column position.
-* If a line with text is deleted, the text from the line will be concatenated to the the end of the line above it.
+* If a line with text is deleted, the text from the line will be concatenated to the end of the line above it.
 * If a new line is created between text, the text will be divided in two. Bringing the segment from the cursor to the end of the current line to the new line created.
-* The program can: open, edit, write and create text files.
+* The program can: open, edit, write, and create text files.
 
-### List of all avaible commands
+### List of all available commands
 
-* `:open filename`
+* `:q` or `:quit`
+  
+  *Quits the program.*
+
+* `:open` (requieres arguments)
  
-  *Open files and prints its content on the screen.*
+  *Open files and print their content on the screen. Pass as an argument the name of the file you want to open.*
 
-* `:write` or `:w`
+* `:write` or `:w` (accepts arguments)
 
-  Writes the data inserted to 
+  *Writes all data inserted into the file passed as arguments. It remembers what file has been written, so it isn't necessary to explicitly tell it again where to write it. Just call the command without arguments and it will be 
+  written. This also works for files that have been opened.*
+
+* `:n` or `:new`
+  
+  *Creates a new empty screen. Same as launching the program without arguments.*
 
 # Installation
 Make sure you have installed at least Java 21 on your system and your terminal recognizes the command `java`. You can check your Java version by running this on your terminal.
