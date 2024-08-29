@@ -1,10 +1,11 @@
-# What is NotVim
+# NotVim
 NotVim is a fast way to edit text files. It works entirely on your terminal so it is very convinient for terminal-based workflows. The project was developed in Java and inspired by Vim.
 
 # Why it was made
-The project was made with the idea of creating an entire text editor from the ground. This includes every aspect of it, from the way the cursor wraps arround the text to the logic of how the files are loaded and written.
+The objective of this project was to create an entire text editor from the ground. This includes every aspect of it, from the way the cursor wraps arround the text to the logic of how files are loaded and written.
 
 All the interfaces, such as the home screen or the error alerts, were made without using any framework. The program only uses **JNA library** to enter **raw mode** on the terminal, by using the native shared libraries required.
+<!-- Link to JNA -->
 
 # How does it work
 
@@ -15,31 +16,54 @@ NotVim has four different modes, each one is used to perform different actions i
 
 * ***Insert mode:*** Used to insert text into a new or existing file. You can access it by pressing the letter `i` while in *normal mode*.
 
-* ***Command mode:*** Used to type new commands, it is accessed by pressing `:` while in *normal mode*. List of commands specified here. <!-- Link to commands -->
+* ***Command mode:*** Used to type commands, it is accessed by pressing `:` while in *normal mode*. Here is the **list of commands**. <!-- Link to commands -->
 
 * ***Visual mode:*** Brings the capability of highlighting text to copy and paste it. This mode hasn't been implemented yet, but it will be in a future release. It will be accessed by pressing the letter `v` while in *normal mode*.
+
+> Tip: You can open a file directly by passing it as the first argument when running the program.
+> 
+> Example: `$ notvim path/to/file`
 
 # Features
 The program counts with all the basics features you will expect from a text editor. Including:
 
 * The cursor can only move trough the text and reacts to user inputs, such as: inserting new characters, creating new lines and deleting lines.
-* The cursor has column memory. This means that if the user moves to a line that doesn't have enough text to maintain 
-* If a line with text is deleted, the text from the line will be concatenated to the text of the line above it.
+* The cursor has column memory. This means that if the user moves to a line that doesn't have enough text to maintain its previous column position, the cursor will move to the end of that line. If the cursor moves again to a new line and this time it has enough characters, it will restore its original column position.
+* If a line with text is deleted, the text from the line will be concatenated to the the end of the line above it.
 * If a new line is created between text, the text will be divided in two. Bringing the segment from the cursor to the end of the current line to the new line created.
+* The program can: open, edit, write and create text files.
 
+### List of all avaible commands
+
+* `:open filename`
+ 
+  *Open files and prints its content on the screen.*
+
+* `:write` or `:w`
+
+  Writes the data inserted to 
 
 # Installation
+Make sure you have installed at least Java 21 on your system and your terminal recognizes the command `java`. You can check your Java version by running this on your terminal.
+<!-- Link to Java 21 -->
 
-Because the application is still under development, the only way to install it is by cloning this repo and building the executable with maven.
+```
+$ java --version
+```
+> In case you have Java installed but your terminal doesn't recongnize the command you will need to set up your JAVA_HOME.
 
-1. Create a script at `~/.local/bin/notVim`, or at any directory you want that is accessed by your system's `$PATH`. You can name it the way you want, keep in mind that the name of the script will be the name of the command you will use to run NotVim.
+
+## Step by step guide of how I would install and set up the program
+
+1. Create a script at `~/.local/bin/notVim`, or at any directory you want, that is accessed by your system's `$PATH`. You can name it any way you want but keep in mind that the name of the script will be the name of the command you will use to run NotVim.
    
 ```bash
 #!/bin/bash
 java -jar ./not-vim-1.0.jar "$@"
 ```
+> Change the name of the file to match the version of NotVim you are using.
 
-1. Download the program package from Github realeses and store it at the same directory of your script.
+2. Download the program package from Github releases and save it at the same directory of your script. <!-- Link to release -->
 
 <br>
 <br>
