@@ -52,7 +52,7 @@ The program counts with all the basic features you would expect from a text edit
 # Installation
 Make sure you have installed at least [Java 21](https://www.oracle.com/ar/java/technologies/downloads/) on your system and your terminal recognizes the command `java`. You can check your Java version by running this on your terminal.
 
-```
+```ruby
 $ java --version
 ```
 > In case you have Java installed but your terminal doesn't recongnize the command you will need to set up your JAVA_HOME.
@@ -60,16 +60,26 @@ $ java --version
 
 ## Step by step guide of how I would install and set up the program
 
-1. Create a script at `~/.local/bin/notVim`, or at any directory you want, that is accessed by your system's `$PATH`. You can name it any way you want but keep in mind that the name of the script will be the name of the command you will use to run NotVim.
-   
-```bash
-#!/bin/bash
-java -jar ./not-vim-1.0.jar "$@"
-```
-> Change the name of the file to match the version of NotVim you are using.
+1. Create a script at `~/.local/bin/`, or at any directory you want, that is accessed by your system's `$PATH`. You can name it **notvim**, keep in mind that the name of the script will be the name of the command you will use to run the program.   
 
-2. Download the program package from [Github releases](https://github.com/Juojo/NotVim/releases) and save it at the same directory of your script.
+```bash
+#!/usr/bin/env bash
+java -jar ./not-vim-1.0.jar "$@" # Change the file name to match the NotVim version you are using.
+```
+
+2. (skip if your system's $PATH is already configured) Add this line to your shell configuration file, commonly located at `~/.zshrc` or `~/.bashrc` (depending on your shell).
+
+```bash
+export PATH=$PATH:/home/juojo/.local/bin # Replace the path to match yours in case you used something different
+```
+
+3. Make your script executable by running this on your terminal.
+```ruby
+$ chmod +x ~/.local/bin/notvim # Replace the path to match yours in case you used something different
+```
+
+4. Download the program package from [Github releases](https://github.com/Juojo/NotVim/releases) and save it in the same directory of your script.
 
 <br>
 
-> Keep in mind that NotVim was developed for unix systems. It doesn't work on Windows machines yet, but I'm working to make it possible.
+> NotVim was developed for unix systems. It doesn't work on Windows machines yet, but I'm working to make it possible.
